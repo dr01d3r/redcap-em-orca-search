@@ -8,7 +8,7 @@ $config = [
     "table_id" => "A" . uniqid(),
     "new_record_text" => $lang['data_entry_46'],
     "include_dag" => false,
-    "groups" => array_combine(REDCap::getGroupNames(true), REDCap::getGroupNames(false)),
+    "groups" => [],
     "search_fields" => [],
     "display_fields" => []
 ];
@@ -27,6 +27,7 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
 if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj->getGroups()) > 0) {
     $config["include_dag"] = true;
     $config["display_fields"]["redcap_data_access_group"] = "Group";
+    $config["groups"] = array_combine($Proj->getUniqueGroupNames(), $Proj->getGroups());
 }
 
 $fieldValues = null;

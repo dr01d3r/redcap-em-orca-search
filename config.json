@@ -1,0 +1,74 @@
+{
+  "name": "Add Edit Records Module",
+  "namespace": "ORCA\\AddEditRecords",
+  "description": "Replacement for Add/Edit Records",
+  "authors": [
+    {
+      "name": "Chris Kadolph",
+      "email": "kadolph.christopher@marshfieldresearch.org",
+      "institution": "Marshfield Clinic Research Institute"
+    }
+  ],
+  "links": {
+    "project": [
+      {
+        "name": "Add Edit Records",
+        "icon": "blog_pencil",
+        "url": "search.php"
+      }
+    ]
+  },
+  "compatibility": {
+    "php-version-min": "5.2.0",
+    "php-version-max": "",
+    "redcap-version-min": "",
+    "redcap-version-max": ""
+  },
+  "project-settings": [
+    {
+      "key": "include_dag_if_exists",
+      "name": "Include DAG in results (only if project uses DAGs)",
+      "required": false,
+      "type": "checkbox"
+    },
+    {
+      "key": "search_fields",
+      "name": "Searchable Fields",
+      "required": true,
+      "type": "sub_settings",
+      "repeatable": true,
+      "sub_settings": [
+        {
+          "key": "search_field_name",
+          "name": "Searchable Field Name",
+          "required": true,
+          "type": "field-list",
+          "repeatable": false
+        },
+        {
+          "key": "search_field_name_wildcard",
+          "name": "Return Partial Matches?",
+          "required": true,
+          "type": "checkbox",
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "key": "display_fields",
+      "name": "Select the fields for display",
+      "required": true,
+      "type": "sub_settings",
+      "repeatable": true,
+      "sub_settings": [
+        {
+          "key": "display_field_name",
+          "name": "Field To Display in the Results Table",
+          "required": true,
+          "type": "field-list",
+          "repeatable": false
+        }
+      ]
+    }
+  ]
+}

@@ -71,7 +71,7 @@ foreach ($records as $record_id => $record) { // Record
     foreach ($config["display_fields"] as $field_name => $field_text) {
         $field_value = null;
         // TODO need to handle eventId properly
-        if (false) { // repeating
+        if (false) { // TODO properly check for and handle repeating instruments/events
              $field_value = $record[$Proj->firstEventId][$Proj->metadata[$field_name]["form_name"]][$field_name];
         } else {
             $field_value = $record[$Proj->firstEventId][$field_name];
@@ -99,7 +99,7 @@ foreach ($records as $record_id => $record) { // Record
 
 $stopSecondsFullLoop = microtime(true);
 
-if (true) {
+if (true) { // TODO this will be replaced with an 'isDebugging' check
 //    $debug["search_info"] = $_POST;
     $debug["Time To Get RecordIDs"] = ($stopSecondsRecordId - $startSeconds) . " seconds";
     $debug["Time To Get Data"] = ($stopSecondsGetData - $startSeconds) . " seconds";

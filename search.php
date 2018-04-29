@@ -39,23 +39,64 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
     $fieldValues[$_POST["search-field"]] = $search_value;
 }
 
+$metadata = [
+    "fields" => [],
+    "forms" => []
+];
 $debug = [];
 $records = [];
 $results = [];
 
+$recordIds = null;
+$recordCount = null;
+
+$startSeconds = microtime(true);
 if (!empty($fieldValues)) {
-    $startSeconds = microtime(true);
     $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", "ALL");
     $stopSecondsRecordId = microtime(true);
     $recordCount = count($recordIds);
-    if ($recordCount > $config["result_limit"]) {
-        $message = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
-    } else if ($recordCount > 0) {
-        $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, null, false, $config["include_dag"]);
+}
+if ($recordCount != null && $recordCount > $config["result_limit"]) {
+    $message = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
+} else {
+    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, null, false, $config["include_dag"]);
+}
+$stopSecondsGetData = microtime(true);
+
+/*
+ * Build the Form/Field Metadata
+ * This is necessary for knowing where to find record
+ * values (i.e. repeating/non-repeating forms)
+ */
+foreach ($Proj->forms as $form_name => $form_data) {
+    $metadata["forms"][$form_name] = [
+        "event_id" => null,
+        "repeating" => false
+    ];
+    foreach ($form_data["fields"]  as $field_name => $field_label) {
+        $metadata["fields"][$field_name] = [
+            "form" => $form_name
+        ];
     }
-    $stopSecondsGetData = microtime(true);
+}
+foreach ($Proj->eventsForms as $event_id => $event_forms) {
+    foreach ($event_forms as $form_index => $form_name) {
+        $metadata["forms"][$form_name]["event_id"] = $event_id;
+    }
+}
+if ($Proj->hasRepeatingForms()) {
+    foreach ($Proj->getRepeatingFormsEvents() as $event_id => $event_forms) {
+        foreach ($event_forms as $form_name => $value) {
+            $metadata["forms"][$form_name]["repeating"] = true;
+        }
+    }
 }
 
+//$module->preout($config);
+
+/*
+ * Record Processing
+ */
 foreach ($records as $record_id => $record) { // Record
 
     $dashboard_url = APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
@@ -69,21 +110,40 @@ foreach ($records as $record_id => $record) { // Record
     ];
 
     foreach ($config["display_fields"] as $field_name => $field_text) {
+        // don't handle DAG directly, it will be set in process of the first non-DAG field
+        if ($field_name === "redcap_data_access_group") continue;
+
+        // prep some form info
+        $field_form_name = $metadata["fields"][$field_name]["form"];
+        $field_form_event_id = $metadata["forms"][$field_form_name]["event_id"];
+
+        // initialize some helper variables/arrays
         $field_value = null;
-        // TODO need to handle eventId properly
-        if (false) { // TODO properly check for and handle repeating instruments/events
-             $field_value = $record[$Proj->firstEventId][$Proj->metadata[$field_name]["form_name"]][$field_name];
+        $form_values = [];
+        $field_value_prefix = "";
+
+        // set the form_values array with the data we want to look at
+        if ($metadata["forms"][$field_form_name]["repeating"]) {
+            $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
+            $field_value_prefix = "(" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . ") ";
         } else {
-            $field_value = $record[$Proj->firstEventId][$field_name];
+            $form_values = $record[$field_form_event_id];
         }
 
         // special handling for dag as well as structured data fields
-        if ($field_name === "redcap_data_access_group") {
-            $field_value = $config["groups"][$field_value];
-        } else if ($Proj->metadata[$field_name]["element_type"] !== "text") {
+        if ($config["include_dag"] === true && !isset($record_info["redcap_data_access_group"])) {
+            $record_info["redcap_data_access_group"] = $config["groups"][$form_values["redcap_data_access_group"]];
+        }
+
+        // set the raw value of the field
+        $field_value = $form_values[$field_name];
+
+        // if it is anything but free text, find the structured non-key value
+        if ($Proj->metadata[$field_name]["element_type"] !== "text") {
             $field_value = $module->getDictionaryValuesFor($field_name)[$field_value];
         }
 
+        // highlighting
         if ($field_name === $_POST["search-field"]) {
             $match_index = strpos(strtolower($field_value), strtolower($_POST["search-value"]));
             $match_value = substr($field_value, $match_index, strlen($_POST["search-value"]));
@@ -91,17 +151,23 @@ foreach ($records as $record_id => $record) { // Record
                 $field_value = str_replace($match_value, "<span class='add-edit-search-content'>{$match_value}</span>", $field_value);
             }
         }
-        $record_info[$field_name] = $field_value;
-    }
 
+        // prepend the instance prefix to the value (if any) and add it to the record info
+        $record_info[$field_name] = $field_value_prefix . $field_value;
+    }
+    // add record data to the full dataset
     $results[$record_id] = $record_info;
 }
 
 $stopSecondsFullLoop = microtime(true);
 
+/*
+ * Push all the results to Smarty templates for rendering
+ */
 if (true) { // TODO this will be replaced with an 'isDebugging' check
-//    $debug["search_info"] = $_POST;
-    $debug["Time To Get RecordIDs"] = ($stopSecondsRecordId - $startSeconds) . " seconds";
+    if ($stopSecondsRecordId) {
+        $debug["Time To Get RecordIDs"] = ($stopSecondsRecordId - $startSeconds) . " seconds";
+    }
     $debug["Time To Get Data"] = ($stopSecondsGetData - $startSeconds) . " seconds";
     $debug["Time To Finish Processing"] = ($stopSecondsFullLoop - $startSeconds) . " seconds";
     if ((isset($debug) && !empty($debug))) {

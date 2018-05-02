@@ -4,13 +4,15 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
 $config = [
-    "result_limit" => 1000,
+    "result_limit" => intval($module->getProjectSetting("search_limit")),
     "table_id" => "A" . uniqid(),
     "new_record_text" => $lang['data_entry_46'],
     "include_dag" => false,
     "groups" => [],
     "search_fields" => [],
-    "display_fields" => []
+    "display_fields" => [],
+    "messages" => [],
+    "errors" => []
 ];
 
 foreach ($module->getSubSettings("search_fields") as $search_field) {
@@ -51,14 +53,18 @@ $recordIds = null;
 $recordCount = null;
 
 $startSeconds = microtime(true);
+
 if (!empty($fieldValues)) {
     $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", "ALL");
     $stopSecondsRecordId = microtime(true);
     $recordCount = count($recordIds);
 }
-if ($recordCount != null && $recordCount > $config["result_limit"]) {
-    $message = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
-} else {
+
+if ($recordCount === 0) {
+    $config["messages"][] = "Search yielded no results.";
+} else if ($recordCount != null && !empty($config["result_limit"]) && $recordCount > $config["result_limit"]) {
+    $config["errors"][] = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
+} else if ($recordCount > 0) {
     $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, null, false, $config["include_dag"]);
 }
 $stopSecondsGetData = microtime(true);
@@ -91,8 +97,6 @@ if ($Proj->hasRepeatingForms()) {
         }
     }
 }
-
-//$module->preout($config);
 
 /*
  * Record Processing
@@ -159,17 +163,13 @@ foreach ($records as $record_id => $record) { // Record
     $results[$record_id] = $record_info;
 }
 
-$stopSecondsFullLoop = microtime(true);
-
 /*
  * Push all the results to Smarty templates for rendering
  */
-if (true) { // TODO this will be replaced with an 'isDebugging' check
-    if ($stopSecondsRecordId) {
-        $debug["Time To Get RecordIDs"] = ($stopSecondsRecordId - $startSeconds) . " seconds";
-    }
-    $debug["Time To Get Data"] = ($stopSecondsGetData - $startSeconds) . " seconds";
-    $debug["Time To Finish Processing"] = ($stopSecondsFullLoop - $startSeconds) . " seconds";
+
+$module->setTemplateVariable("total_server_time", $time_data_processing_complete);
+
+if (false) { // TODO this will be replaced with an 'enable debugging' setting
     if ((isset($debug) && !empty($debug))) {
         $module->setTemplateVariable("debug", print_r($debug, true));
     }
@@ -189,8 +189,14 @@ $module->setTemplateVariable("newRecordUrl",
     ]));
 
 $module->setTemplateVariable("data", $results);
-$module->setTemplateVariable("message", $message);
 
 $module->displayTemplate('add_edit_records.tpl');
+
+$stopSecondsFullLoop = microtime(true);
+$time_initial_record_result = round($stopSecondsRecordId - $startSeconds, 4);
+$time_total_record_result = round($stopSecondsGetData - $startSeconds, 4);
+$time_data_processing_complete = round($stopSecondsFullLoop - $startSeconds, 4);
+
+echo "<i>Total Server Time: {$time_data_processing_complete} seconds</i>";
 
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';

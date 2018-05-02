@@ -14,7 +14,7 @@ require_once 'traits/REDCapUtils.php';
  * @package ORCA\AddEditRecords
  */
 class AddEditRecords extends AbstractExternalModule {
-    use \REDCapUtils;
+    use \ORCA\AddEditRecords\REDCapUtils;
 
     private static $smarty;
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace ORCA\AddEditRecords;
+
 trait REDCapUtils {
 
     private $_pid = 0;
@@ -65,8 +67,6 @@ trait REDCapUtils {
     }
 
 	/**
-	 * TODO: Do we need it to do consider anything other than the latest version of each field_value?
-	 *
 	 * NOTE: Passing in at least one fieldValue or orderBy will significantly improve performance
 	 *
 	 * NOTE: Avoiding the use of the % wildcard will significantly improve performance
@@ -96,7 +96,6 @@ trait REDCapUtils {
 			throw new \Exception(sprintf("PARAMETER_OF_TYPE_INVALID", "\$instanceToMatchTypes", $instanceToMatch));
 		}
 
-		// TODO Add ability to sort by dates and other non-standard datatypes
 		$fieldValuesToStrPosOrEquals = [];
 
 		foreach($fieldValues as $field => $value){
@@ -114,7 +113,6 @@ trait REDCapUtils {
 
 		$allFieldNamesInString = " AND field_name IN('" . implode("', '", $allFieldNamesNeeded) . "')";
 
-		// TODO Is event_id ever going to be relevant?
 		$primarySql = "SELECT record, field_name, value, instance FROM redcap_data WHERE project_id = " . $this->getPid() . $allFieldNamesInString;
 		$primaryResult = $this->_getREDCapConn()->query($primarySql);
 		$allRecords = [];

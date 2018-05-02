@@ -36,15 +36,39 @@
     .add-edit-search-content {
         background-color: lightblue;
     }
+
+    .alert {
+        border: 1px solid transparent !important;
+        /*margin-bottom: 10px;*/
+    }
+    .alert-danger {
+        border-color: #ebccd1 !important;
+    }
+    .alert-warning {
+        border-color: #faebcc !important;
+    }
+    .alert-info {
+        border-color: #bce8f1 !important;
+    }
+    .alert-success {
+        border-color: #d6e9c6 !important;
+    }
 </style>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
-{if $message}
+{foreach from=$config["messages"] item=message}
+    <div class="alert alert-info alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <b>Info:</b> {$message}
+    </div>
+{/foreach}
+
+{foreach from=$config["errors"] item=error}
     <div class="alert alert-danger alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <b>Error:</b> {$message}
+        <b>Error:</b> {$error}
     </div>
-{/if}
+{/foreach}
 
 <div class="panel panel-default">
     <!-- Default panel contents -->
@@ -72,9 +96,9 @@
                 <div class="form-group col-md-6">
                     <label for="search-field">Search Text</label><br/>
                     {if !empty($search_info["search-value"])}
-                        <input name="search-value" type="text" class="form-control" value="{$search_info["search-value"]}" />
+                        <input id="search-value" name="search-value" type="text" class="form-control" value="{$search_info["search-value"]}" />
                     {else}
-                        <input name="search-value" type="text" class="form-control" />
+                        <input id="search-value" name="search-value" type="text" class="form-control" />
                     {/if}
                 </div>
                 <div class="form-group col-md-3">
@@ -140,6 +164,10 @@
             }
         });
 
+        if ($("#search-value").val().length == 0) {
+            $("#search-value").focus();
+        }
+
         $("body").on("click", "#add-edit-new-record", function() {
             window.location.href = '{$newRecordUrl}';
         });
@@ -147,6 +175,8 @@
         $("body").on("click", "#add-edit-search", function() {
             document.forms[0].submit();
         });
+
+
 
         // disable form resubmit on refresh/back
         if ( window.history.replaceState ) {

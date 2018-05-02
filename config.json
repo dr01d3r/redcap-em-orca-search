@@ -7,6 +7,11 @@
       "name": "Chris Kadolph",
       "email": "kadolph.christopher@marshfieldresearch.org",
       "institution": "Marshfield Clinic Research Institute"
+    },
+    {
+      "name": "Leila Deering",
+      "email": "deering.leila@marshfieldresearch.org",
+      "institution": "Marshfield Clinic Research Institute"
     }
   ],
   "links": {
@@ -25,6 +30,35 @@
     "redcap-version-max": ""
   },
   "project-settings": [
+    {
+      "key": "search_limit",
+      "name": "Limit the search results.",
+      "required": true,
+      "type": "dropdown",
+      "default": 1000,
+      "choices": [
+        {
+          "value": 0,
+          "name": "No Limit"
+        },
+        {
+          "value": 500,
+          "name": "500"
+        },
+        {
+          "value": 1000,
+          "name": "1000"
+        },
+        {
+          "value": 2000,
+          "name": "2000"
+        },
+        {
+          "value": 5000,
+          "name": "5000"
+        }
+      ]
+    },
     {
       "key": "include_dag_if_exists",
       "name": "Include DAG in results (only if project uses DAGs)",

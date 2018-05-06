@@ -5,8 +5,18 @@ require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
 $config = [
     "result_limit" => intval($module->getProjectSetting("search_limit")),
+    "has_repeating_forms" => $Proj->hasRepeatingForms(),
+    "instance_search" => $module->getProjectSetting("instance_search"),
+    "show_instance_badge" => $module->getProjectSetting("show_instance_badge"),
     "table_id" => "A" . uniqid(),
+    "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
+    "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],
+    "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
+        "pid" => $module->getPid(),
+        "auto" => "1"
+    ]),
+    "new_record_auto_id" => getAutoId(),
     "include_dag" => false,
     "groups" => [],
     "search_fields" => [],
@@ -55,7 +65,7 @@ $recordCount = null;
 $startSeconds = microtime(true);
 
 if (!empty($fieldValues)) {
-    $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", "ALL");
+    $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
     $stopSecondsRecordId = microtime(true);
     $recordCount = count($recordIds);
 }
@@ -90,7 +100,7 @@ foreach ($Proj->eventsForms as $event_id => $event_forms) {
         $metadata["forms"][$form_name]["event_id"] = $event_id;
     }
 }
-if ($Proj->hasRepeatingForms()) {
+if ($config["has_repeating_forms"]) {
     foreach ($Proj->getRepeatingFormsEvents() as $event_id => $event_forms) {
         foreach ($event_forms as $form_name => $value) {
             $metadata["forms"][$form_name]["repeating"] = true;
@@ -124,12 +134,14 @@ foreach ($records as $record_id => $record) { // Record
         // initialize some helper variables/arrays
         $field_value = null;
         $form_values = [];
-        $field_value_prefix = "";
+        $field_value_suffix = "";
 
         // set the form_values array with the data we want to look at
         if ($metadata["forms"][$field_form_name]["repeating"]) {
             $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
-            $field_value_prefix = "(" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . ") ";
+            if ($config["show_instance_badge"] === true) {
+                $field_value_suffix = "<span class='badge'>" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . "</span>";
+            }
         } else {
             $form_values = $record[$field_form_event_id];
         }
@@ -148,16 +160,18 @@ foreach ($records as $record_id => $record) { // Record
         }
 
         // highlighting
-        if ($field_name === $_POST["search-field"]) {
+        if ($field_name === $_POST["search-field"] && $config["search_fields"][$field_name]["wildcard"]) {
             $match_index = strpos(strtolower($field_value), strtolower($_POST["search-value"]));
             $match_value = substr($field_value, $match_index, strlen($_POST["search-value"]));
-            if ($match_index >= 0) {
+            if ($match_index !== false) {
                 $field_value = str_replace($match_value, "<span class='add-edit-search-content'>{$match_value}</span>", $field_value);
+            } else {
+                // TODO some way to indicate to the user that the matching content is not on the latest instance of this value
             }
         }
 
         // prepend the instance prefix to the value (if any) and add it to the record info
-        $record_info[$field_name] = $field_value_prefix . $field_value;
+        $record_info[$field_name] = $field_value . $field_value_suffix;
     }
     // add record data to the full dataset
     $results[$record_id] = $record_info;
@@ -170,6 +184,7 @@ foreach ($records as $record_id => $record) { // Record
 $module->setTemplateVariable("total_server_time", $time_data_processing_complete);
 
 if (false) { // TODO this will be replaced with an 'enable debugging' setting
+    $debug["config"] = $config;
     if ((isset($debug) && !empty($debug))) {
         $module->setTemplateVariable("debug", print_r($debug, true));
     }
@@ -180,13 +195,6 @@ $module->setTemplateVariable("config", $config);
 if (!empty($_POST)) {
     $module->setTemplateVariable("search_info", $_POST);
 }
-
-$module->setTemplateVariable("newRecordUrl",
-    APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
-        "pid" => $module->getPid(),
-        "id" => getAutoId(),
-        "auto" => "1"
-    ]));
 
 $module->setTemplateVariable("data", $results);
 

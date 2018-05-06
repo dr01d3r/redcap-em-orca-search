@@ -34,7 +34,8 @@
     }
 
     .add-edit-search-content {
-        background-color: lightblue;
+        font-weight: bold;
+        color: blue;
     }
 
     .alert {
@@ -56,6 +57,7 @@
 </style>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+
 {foreach from=$config["messages"] item=message}
     <div class="alert alert-info alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -87,10 +89,22 @@
                         {/foreach}
                     </select>
                 </div>
-                <div class="form-group col-md-3">
-                    <label>New Record</label><br/>
-                    <button id="add-edit-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
-                </div>
+                {if $config["auto_numbering"]}
+                    <div class="form-group col-md-6">
+                        <label>New Record</label><br/>
+                        <button id="add-edit-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
+                    </div>
+                {else}
+                    <div class="col-md-6">
+                        <label>New Record</label><br/>
+                        <div class="input-group">
+                            <input id="add-edit-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
+                            <span class="input-group-btn">
+                                <button id="add-edit-new-record" type="button" class="btn btn-default">{$config["new_record_text"]}</button>
+                            </span>
+                        </div>
+                    </div>
+                {/if}
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
@@ -101,45 +115,58 @@
                         <input id="search-value" name="search-value" type="text" class="form-control" />
                     {/if}
                 </div>
-                <div class="form-group col-md-3">
-                    <label>&nbsp;</label><br/>
+                <div class="form-group col-md-6">
+                    {if $config["result_limit"] > 0}
+                        <label>Limit: <i style="font-weight: normal;">{$config["result_limit"]}</i></label>
+                    {else}
+                        <label>&nbsp;</label><br/>
+                    {/if}
                     <button id="add-edit-search" type="button" class="btn btn-info form-control">Search</button>
                 </div>
             </div>
         </form>
+        {if $config["has_repeating_forms"]}
+            {if $config["instance_search"] === "LATEST"}
+                <b>Note:</b> <i>Search will only return matches that occur within the <b>latest</b> instance of a form.</i>
+            {else}
+                <b>Note:</b> <i>Search will return matches that occur in <b>any</b> instance of a form.</i>
+            {/if}
+        {/if}
     </div>
     <div>
         <div id="{$config["table_id"]}_ph">
             Loading data. Please wait...
         </div>
-        <table id="{$config["table_id"]}" class="table table-bordered table-condensed table-hover">
-            <thead>
-            <tr>
-                {foreach from=$config["display_fields"] key=col_name item=col_value}
-                    <th class="header">{$col_value}</th>
-                {/foreach}
-                <th class="header">Record Home</th>
-            </tr>
-            </thead>
-            <tbody>
-            {foreach from=$data key=record_id item=record}
+        <div class="table-responsive">
+            <table id="{$config["table_id"]}" class="table table-bordered table-condensed table-hover">
+                <thead>
                 <tr>
                     {foreach from=$config["display_fields"] key=col_name item=col_value}
-                        <td>{$record[$col_name]}</td>
+                        <th class="header">{$col_value}</th>
                     {/foreach}
-                    <td>
-                        <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
-                            <span class="ui-button-text">
-                                <span class="ui-button-text">
-                                    <span class="glyphicon glyphicon-edit"></span>&nbsp;Open
-                                </span>
-                            </span>
-                        </a>
-                    </td>
+                    <th class="header">Record Home</th>
                 </tr>
-            {/foreach}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {foreach from=$data key=record_id item=record}
+                    <tr>
+                        {foreach from=$config["display_fields"] key=col_name item=col_value}
+                            <td>{$record[$col_name]}</td>
+                        {/foreach}
+                        <td>
+                            <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                                <span class="ui-button-text">
+                                    <span class="ui-button-text">
+                                        <span class="glyphicon glyphicon-edit"></span>&nbsp;Open
+                                    </span>
+                                </span>
+                            </a>
+                        </td>
+                    </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -169,7 +196,37 @@
         }
 
         $("body").on("click", "#add-edit-new-record", function() {
-            window.location.href = '{$newRecordUrl}';
+            {if $config["auto_numbering"]}
+                window.location.href = '{$config["new_record_url"]}' + '&id=' + {$config["new_record_auto_id"]} + addGoogTrans();
+            {else}
+                var refocus = false;
+                var idval = trim($('#add-edit-new-record-id').val());
+                if (idval.length < 1) {
+                    return;
+                }
+                if (idval.length > 100) {
+                    refocus = true;
+                    alert('The value entered must be 100 characters or less in length');
+                }
+                if (refocus) {
+                    setTimeout(function(){ document.getElementById('add-edit-new-record-id').focus(); },10);
+                } else {
+                    $('#add-edit-new-record-id').val(idval);
+                    idval = $('#add-edit-new-record-id').val();
+                    idval = idval.replace(/&quot;/g,''); // HTML char code of double quote
+                    var validRecordName = recordNameValid(idval);
+                    if (validRecordName !== true) {
+                        $('#add-edit-new-record-id').val('');
+                        alert(validRecordName);
+                        $('#add-edit-new-record-id').focus();
+                        return false;
+                    }
+                    // Redirect, but NOT if the validation pop-up is being displayed (for range check errors)
+                    if (!$('.simpleDialog.ui-dialog-content:visible').length) {
+                        window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
+                    }
+                }
+            {/if}
         });
 
         $("body").on("click", "#add-edit-search", function() {

@@ -80,7 +80,7 @@ trait REDCapUtils {
 	 *
 	 * @param  array  $fieldValues   - An array of field_name to values; if they match (see $fieldValuesMatchType), the record is returned
 	 * @param  string $fieldValuesMatchType - How the fieldValues need to match a given record to make it a valid record to return
-	 * @param  string $instanceToMatch - "LATEST" to check fields against just the latest instance, or "ALL" to cehck against all instances
+	 * @param  string $instanceToMatch - "LATEST" to check fields against just the latest instance, or "ALL" to check against all instances
 	 *
 	 * @return array - An array of record ids, or [{associated information elements}, "records_ids" => [1,2,3]] if requested
 	 *

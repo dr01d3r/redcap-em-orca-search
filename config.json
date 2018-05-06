@@ -60,10 +60,35 @@
       ]
     },
     {
+      "key": "instance_search",
+      "name": "Which instances to search through.",
+      "required": true,
+      "type": "dropdown",
+      "default": "LATEST",
+      "choices": [
+        {
+          "value": "LATEST",
+          "name": "Latest"
+        },
+        {
+          "value": "ALL",
+          "name": "All"
+        }
+      ]
+    },
+    {
+      "key": "show_instance_badge",
+      "name": "Show Instance Badge",
+      "required": false,
+      "type": "checkbox",
+      "default": false
+    },
+    {
       "key": "include_dag_if_exists",
       "name": "Include DAG in results (only if project uses DAGs)",
       "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+      "default": false
     },
     {
       "key": "search_fields",

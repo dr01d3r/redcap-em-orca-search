@@ -35,7 +35,6 @@
       "name": "Limit the search results.",
       "required": true,
       "type": "dropdown",
-      "default": 1000,
       "choices": [
         {
           "value": 0,
@@ -64,7 +63,6 @@
       "name": "Which instances to search through.",
       "required": true,
       "type": "dropdown",
-      "default": "LATEST",
       "choices": [
         {
           "value": "LATEST",
@@ -80,15 +78,13 @@
       "key": "show_instance_badge",
       "name": "Show Instance Badge",
       "required": false,
-      "type": "checkbox",
-      "default": false
+      "type": "checkbox"
     },
     {
       "key": "include_dag_if_exists",
       "name": "Include DAG in results (only if project uses DAGs)",
       "required": false,
-      "type": "checkbox",
-      "default": false
+      "type": "checkbox"
     },
     {
       "key": "search_fields",

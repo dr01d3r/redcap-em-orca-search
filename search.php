@@ -18,12 +18,17 @@ $config = [
     ]),
     "new_record_auto_id" => getAutoId(),
     "include_dag" => false,
+    "user_dag" => null,
     "groups" => [],
     "search_fields" => [],
     "display_fields" => [],
     "messages" => [],
     "errors" => []
 ];
+
+if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
+    $config["user_dag"] = \REDCAP::getGroupNames(true, \REDCap::getUserRights(USERID)[USERID]["group_id"]);
+}
 
 foreach ($module->getSubSettings("search_fields") as $search_field) {
     $config["search_fields"][$search_field["search_field_name"]] = [
@@ -75,7 +80,7 @@ if ($recordCount === 0) {
 } else if ($recordCount != null && !empty($config["result_limit"]) && $recordCount > $config["result_limit"]) {
     $config["errors"][] = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
 } else if ($recordCount > 0) {
-    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, null, false, $config["include_dag"]);
+    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
 }
 $stopSecondsGetData = microtime(true);
 
@@ -138,6 +143,7 @@ foreach ($records as $record_id => $record) { // Record
 
         // set the form_values array with the data we want to look at
         if ($metadata["forms"][$field_form_name]["repeating"]) {
+            // TODO (ALL vs LATEST) consider finding the latest instance where the search value was found, and display that instead of always the latest
             $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
             if ($config["show_instance_badge"] === true) {
                 $field_value_suffix = "<span class='badge'>" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . "</span>";
@@ -153,6 +159,10 @@ foreach ($records as $record_id => $record) { // Record
 
         // set the raw value of the field
         $field_value = $form_values[$field_name];
+
+        if ($field_name === $Proj->table_pk) {
+            $record_info["__SORT__"] = floatval(str_replace("-", ".", $field_value));
+        }
 
         // if it is anything but free text, find the structured non-key value
         if ($Proj->metadata[$field_name]["element_type"] !== "text") {

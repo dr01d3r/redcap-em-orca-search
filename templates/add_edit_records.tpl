@@ -132,6 +132,9 @@
                 <b>Note:</b> <i>Search will return matches that occur in <b>any</b> instance of a form.</i>
             {/if}
         {/if}
+        {if !empty($config["user_dag"])}
+            <b>Note:</b> <i>Search results will be limited to the <b>{$config["groups"][$config["user_dag"]]}</b> Data Access Group.</i>
+        {/if}
     </div>
     <div>
         <div id="{$config["table_id"]}_ph">
@@ -151,7 +154,7 @@
                 {foreach from=$data key=record_id item=record}
                     <tr>
                         {foreach from=$config["display_fields"] key=col_name item=col_value}
-                            <td>{$record[$col_name]}</td>
+                            <td{if $record[$col_name]["__SORT__"]} data-sort="{$record["__SORT__"]}"{/if}>{$record[$col_name]}</td>
                         {/foreach}
                         <td>
                             <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
@@ -221,10 +224,7 @@
                         $('#add-edit-new-record-id').focus();
                         return false;
                     }
-                    // Redirect, but NOT if the validation pop-up is being displayed (for range check errors)
-                    if (!$('.simpleDialog.ui-dialog-content:visible').length) {
-                        window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
-                    }
+                    window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
                 }
             {/if}
         });
@@ -232,8 +232,11 @@
         $("body").on("click", "#add-edit-search", function() {
             document.forms[0].submit();
         });
-
-
+        $("body").on("keypress", "#search-value", function(e) {
+            if (e.which == 13) {
+                document.forms[0].submit();
+            }
+        });
 
         // disable form resubmit on refresh/back
         if ( window.history.replaceState ) {

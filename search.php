@@ -3,6 +3,8 @@
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
+$module->addTime();
+
 $config = [
     "result_limit" => intval($module->getProjectSetting("search_limit")),
     "has_repeating_forms" => $Proj->hasRepeatingForms(),
@@ -12,11 +14,11 @@ $config = [
     "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
     "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],
-    "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
-        "pid" => $module->getPid(),
-        "auto" => "1"
-    ]),
-    "new_record_auto_id" => getAutoId(),
+//    "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
+//        "pid" => $module->getPid(),
+//        "auto" => "1"
+//    ]),
+//    "new_record_auto_id" => getAutoId(), // TODO this takes a long time and makes the module load slowly
     "include_dag" => false,
     "user_dag" => null,
     "groups" => [],
@@ -42,8 +44,6 @@ $results = [];
 
 $recordIds = null;
 $recordCount = null;
-
-$startSeconds = microtime(true);
 
 /*
  * Build the Form/Field Metadata
@@ -124,7 +124,6 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
 
 if (!empty($fieldValues)) {
     $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
-    $stopSecondsRecordId = microtime(true);
     $recordCount = count($recordIds);
 }
 
@@ -135,7 +134,6 @@ if ($recordCount === 0) {
 } else if ($recordCount > 0) {
     $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
 }
-$stopSecondsGetData = microtime(true);
 
 /*
  * Record Processing
@@ -242,11 +240,7 @@ $module->setTemplateVariable("data", $results);
 
 $module->displayTemplate('add_edit_records.tpl');
 
-$stopSecondsFullLoop = microtime(true);
-$time_initial_record_result = round($stopSecondsRecordId - $startSeconds, 4);
-$time_total_record_result = round($stopSecondsGetData - $startSeconds, 4);
-$time_data_processing_complete = round($stopSecondsFullLoop - $startSeconds, 4);
-
-echo "<i>Total Server Time: {$time_data_processing_complete} seconds</i>";
+$module->addTime();
+$module->outputTimerInfo();
 
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';

@@ -92,15 +92,15 @@
                 {if $config["auto_numbering"]}
                     <div class="form-group col-md-6">
                         <label>New Record</label><br/>
-                        <button id="add-edit-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
+                        <button id="add-edit-new-record" type="button" class="btn btn-default form-control" disabled>{$config["new_record_text"]}</button>
                     </div>
                 {else}
                     <div class="col-md-6">
                         <label>New Record</label><br/>
                         <div class="input-group">
-                            <input id="add-edit-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
+                            <input id="add-edit-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" disabled />
                             <span class="input-group-btn">
-                                <button id="add-edit-new-record" type="button" class="btn btn-default">{$config["new_record_text"]}</button>
+                                <button id="add-edit-new-record" type="button" class="btn btn-default" disabled>{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>

@@ -17,6 +17,7 @@ class AddEditRecords extends AbstractExternalModule {
     use \ORCA\AddEditRecords\REDCapUtils;
 
     private static $smarty;
+    public $timers = [];
 
     public function __construct()
     {
@@ -39,5 +40,32 @@ class AddEditRecords extends AbstractExternalModule {
 
     public function displayTemplate($template) {
         self::$smarty->display($template);
+    }
+
+    public function addTime($key = null) {
+        $this->timers[] = [
+            "label" => $key ?? "STEP " . count($this->timers),
+            "value" => microtime(true)
+        ];
+    }
+
+    public function outputTimerInfo($showAll = false) {
+        $initTime = null;
+        $preTime = null;
+        $curTime = null;
+        foreach ($this->timers as $index => $timeInfo) {
+            $curTime = $timeInfo;
+            if ($preTime == null) {
+                $initTime = $timeInfo;
+            } else {
+                $calcTime = round($curTime["value"] - $preTime["value"], 4);
+                if ($showAll) {
+                    echo "<p><i>{$timeInfo["label"]}: {$calcTime}</i></p>";
+                }
+            }
+            $preTime = $curTime;
+        }
+        $calcTime = round($curTime["value"] - $initTime["value"], 4);
+        echo "<p><i>Total Processing Time: {$calcTime} seconds</i></p>";
     }
 }

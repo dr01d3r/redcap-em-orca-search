@@ -26,40 +26,16 @@ $config = [
     "errors" => []
 ];
 
-if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
-    $config["user_dag"] = \REDCAP::getGroupNames(true, \REDCap::getUserRights(USERID)[USERID]["group_id"]);
-}
-
-foreach ($module->getSubSettings("search_fields") as $search_field) {
-    $config["search_fields"][$search_field["search_field_name"]] = [
-        "wildcard" => $search_field["search_field_name_wildcard"],
-        "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
-    ];
-}
-
-foreach ($module->getSubSettings("display_fields") as $display_field) {
-    $config["display_fields"][$display_field["display_field_name"]] = $module->getDictionaryLabelFor($display_field["display_field_name"]);
-}
-
-if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj->getGroups()) > 0) {
-    $config["include_dag"] = true;
-    $config["display_fields"]["redcap_data_access_group"] = "Group";
-    $config["groups"] = array_combine($Proj->getUniqueGroupNames(), $Proj->getGroups());
-}
-
-$fieldValues = null;
-if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
-    $search_value = $_POST["search-value"];
-    if ($config["search_fields"][$_POST["search-field"]]["wildcard"] === true) {
-        $search_value = "$search_value%";
-    }
-    $fieldValues[$_POST["search-field"]] = $search_value;
-}
-
 $metadata = [
     "fields" => [],
-    "forms" => []
+    "forms" => [],
+    "form_statuses" => [
+        0 => "Incomplete",
+        1 => "Unverified",
+        2 => "Complete"
+    ]
 ];
+
 $debug = [];
 $records = [];
 $results = [];
@@ -68,21 +44,6 @@ $recordIds = null;
 $recordCount = null;
 
 $startSeconds = microtime(true);
-
-if (!empty($fieldValues)) {
-    $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
-    $stopSecondsRecordId = microtime(true);
-    $recordCount = count($recordIds);
-}
-
-if ($recordCount === 0) {
-    $config["messages"][] = "Search yielded no results.";
-} else if ($recordCount != null && !empty($config["result_limit"]) && $recordCount > $config["result_limit"]) {
-    $config["errors"][] = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
-} else if ($recordCount > 0) {
-    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
-}
-$stopSecondsGetData = microtime(true);
 
 /*
  * Build the Form/Field Metadata
@@ -113,6 +74,69 @@ if ($config["has_repeating_forms"]) {
     }
 }
 
+if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
+    $config["user_dag"] = \REDCAP::getGroupNames(true, \REDCap::getUserRights(USERID)[USERID]["group_id"]);
+}
+
+foreach ($module->getSubSettings("search_fields") as $search_field) {
+    if ($Proj->isFormStatus($search_field["search_field_name"])) {
+        $config["search_fields"][$search_field["search_field_name"]] = [
+            "wildcard" => $search_field["search_field_name_wildcard"],
+            "value" => $Proj->forms[$Proj->metadata[$search_field["search_field_name"]]["form_name"]]["menu"] . " Status"
+        ];
+    } else {
+        $config["search_fields"][$search_field["search_field_name"]] = [
+            "wildcard" => $search_field["search_field_name_wildcard"],
+            "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
+        ];
+    }
+}
+
+foreach ($module->getSubSettings("display_fields") as $display_field) {
+    if ($Proj->isFormStatus($display_field["display_field_name"])) {
+        $config["display_fields"][$display_field["display_field_name"]] = [
+            "is_form_status" => true,
+            "label" => $Proj->forms[$Proj->metadata[$display_field["display_field_name"]]["form_name"]]["menu"] . " Status"
+        ];
+    } else {
+        $config["display_fields"][$display_field["display_field_name"]] = [
+            "label" => $module->getDictionaryLabelFor($display_field["display_field_name"])
+        ];
+    }
+}
+
+if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj->getGroups()) > 0) {
+    $config["include_dag"] = true;
+    $config["display_fields"]["redcap_data_access_group"] = [
+        "label" => "Group"
+    ];
+    $config["groups"] = array_combine($Proj->getUniqueGroupNames(), $Proj->getGroups());
+}
+
+$fieldValues = null;
+if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
+    $search_value = $_POST["search-value"];
+    if ($config["search_fields"][$_POST["search-field"]]["wildcard"] === true) {
+        $search_value = "$search_value%";
+    }
+    $fieldValues[$_POST["search-field"]] = $search_value;
+}
+
+if (!empty($fieldValues)) {
+    $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
+    $stopSecondsRecordId = microtime(true);
+    $recordCount = count($recordIds);
+}
+
+if ($recordCount === 0) {
+    $config["messages"][] = "Search yielded no results.";
+} else if ($recordCount != null && !empty($config["result_limit"]) && $recordCount > $config["result_limit"]) {
+    $config["errors"][] = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
+} else if ($recordCount > 0) {
+    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
+}
+$stopSecondsGetData = microtime(true);
+
 /*
  * Record Processing
  */
@@ -128,7 +152,7 @@ foreach ($records as $record_id => $record) { // Record
         "dashboard_url" => $dashboard_url
     ];
 
-    foreach ($config["display_fields"] as $field_name => $field_text) {
+    foreach ($config["display_fields"] as $field_name => $field_info) {
         // don't handle DAG directly, it will be set in process of the first non-DAG field
         if ($field_name === "redcap_data_access_group") continue;
 
@@ -161,11 +185,19 @@ foreach ($records as $record_id => $record) { // Record
         $field_value = $form_values[$field_name];
 
         if ($field_name === $Proj->table_pk) {
-            $record_info["__SORT__"] = floatval(str_replace("-", ".", $field_value));
+            $parts = explode("-", $field_value);
+            if (count($parts) > 1) {
+                $record_info["__SORT__"] = implode(".", [$parts[0], str_pad($parts[1], 10, "0", STR_PAD_LEFT)]);
+            } else {
+                $record_info["__SORT__"] = $field_value;
+            }
         }
 
-        // if it is anything but free text, find the structured non-key value
-        if ($Proj->metadata[$field_name]["element_type"] !== "text") {
+        if ($field_info["is_form_status"] === true) {
+            // special value handling for form statuses
+            $field_value = $metadata["form_statuses"][$field_value];
+        } else if ($Proj->metadata[$field_name]["element_type"] !== "text") {
+            // if it is anything but free text, find the structured non-key value
             $field_value = $module->getDictionaryValuesFor($field_name)[$field_value];
         }
 

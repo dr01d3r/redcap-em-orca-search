@@ -145,7 +145,7 @@
                 <thead>
                 <tr>
                     {foreach from=$config["display_fields"] key=col_name item=col_value}
-                        <th class="header">{$col_value}</th>
+                        <th class="header">{$col_value["label"]}</th>
                     {/foreach}
                     <th class="header">Record Home</th>
                 </tr>

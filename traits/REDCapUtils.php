@@ -33,7 +33,7 @@ trait REDCapUtils {
     }
 
     public function getDictionaryLabelFor($key) {
-        return $this->getDataDictionary("array")[$key]['field_label'];
+        return $this->getDataDictionary("array")[$key]['field_label'] ?? $key;
     }
 
     public function getDictionaryValuesFor($key) {

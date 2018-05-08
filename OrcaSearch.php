@@ -1,6 +1,6 @@
 <?php
 // Set the namespace defined in your config file
-namespace ORCA\AddEditRecords;
+namespace ORCA\OrcaSearch;
 
 // The next 2 lines should always be included and be the same in every module
 use ExternalModules\AbstractExternalModule;
@@ -10,11 +10,11 @@ require_once 'vendor/autoload.php';
 require_once 'traits/REDCapUtils.php';
 
 /**
- * Class AddEditRecords
- * @package ORCA\AddEditRecords
+ * Class OrcaSearch
+ * @package ORCA\OrcaSearch
  */
-class AddEditRecords extends AbstractExternalModule {
-    use \ORCA\AddEditRecords\REDCapUtils;
+class OrcaSearch extends AbstractExternalModule {
+    use \ORCA\OrcaSearch\REDCapUtils;
 
     private static $smarty;
     public $timers = [];

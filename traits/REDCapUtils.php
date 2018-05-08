@@ -1,6 +1,6 @@
 <?php
 
-namespace ORCA\AddEditRecords;
+namespace ORCA\OrcaSearch;
 
 trait REDCapUtils {
 

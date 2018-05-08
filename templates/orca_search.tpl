@@ -33,7 +33,7 @@
         white-space: nowrap;
     }
 
-    .add-edit-search-content {
+    .orca-search-content {
         font-weight: bold;
         color: blue;
     }
@@ -92,15 +92,15 @@
                 {if $config["auto_numbering"]}
                     <div class="form-group col-md-6">
                         <label>New Record</label><br/>
-                        <button id="add-edit-new-record" type="button" class="btn btn-default form-control" disabled>{$config["new_record_text"]}</button>
+                        <button id="orca-search-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
                     </div>
                 {else}
                     <div class="col-md-6">
                         <label>New Record</label><br/>
                         <div class="input-group">
-                            <input id="add-edit-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" disabled />
+                            <input id="orca-search-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
                             <span class="input-group-btn">
-                                <button id="add-edit-new-record" type="button" class="btn btn-default" disabled>{$config["new_record_text"]}</button>
+                                <button id="orca-search-new-record" type="button" class="btn btn-default">{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                     {else}
                         <label>&nbsp;</label><br/>
                     {/if}
-                    <button id="add-edit-search" type="button" class="btn btn-info form-control">Search</button>
+                    <button id="orca-search" type="button" class="btn btn-info form-control">Search</button>
                 </div>
             </div>
         </form>
@@ -198,12 +198,12 @@
             $("#search-value").focus();
         }
 
-        $("body").on("click", "#add-edit-new-record", function() {
+        $("body").on("click", "#orca-search-new-record", function() {
             {if $config["auto_numbering"]}
                 window.location.href = '{$config["new_record_url"]}' + '&id=' + {$config["new_record_auto_id"]} + addGoogTrans();
             {else}
                 var refocus = false;
-                var idval = trim($('#add-edit-new-record-id').val());
+                var idval = trim($('#orca-search-new-record-id').val());
                 if (idval.length < 1) {
                     return;
                 }
@@ -212,16 +212,16 @@
                     alert('The value entered must be 100 characters or less in length');
                 }
                 if (refocus) {
-                    setTimeout(function(){ document.getElementById('add-edit-new-record-id').focus(); },10);
+                    setTimeout(function(){ document.getElementById('orca-search-new-record-id').focus(); },10);
                 } else {
-                    $('#add-edit-new-record-id').val(idval);
-                    idval = $('#add-edit-new-record-id').val();
+                    $('#orca-search-new-record-id').val(idval);
+                    idval = $('#orca-search-new-record-id').val();
                     idval = idval.replace(/&quot;/g,''); // HTML char code of double quote
                     var validRecordName = recordNameValid(idval);
                     if (validRecordName !== true) {
-                        $('#add-edit-new-record-id').val('');
+                        $('#orca-search-new-record-id').val('');
                         alert(validRecordName);
-                        $('#add-edit-new-record-id').focus();
+                        $('#orca-search-new-record-id').focus();
                         return false;
                     }
                     window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
@@ -229,7 +229,7 @@
             {/if}
         });
 
-        $("body").on("click", "#add-edit-search", function() {
+        $("body").on("click", "#orca-search", function() {
             document.forms[0].submit();
         });
         $("body").on("keypress", "#search-value", function(e) {

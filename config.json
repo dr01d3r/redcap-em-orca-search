@@ -1,7 +1,7 @@
 {
-  "name": "Add Edit Records Module",
-  "namespace": "ORCA\\AddEditRecords",
-  "description": "Replacement for Add/Edit Records",
+  "name": "Orca Search Module",
+  "namespace": "ORCA\\OrcaSearch",
+  "description": "A configurable, searchable, and performant, list dashboard",
   "authors": [
     {
       "name": "Chris Kadolph",
@@ -17,7 +17,7 @@
   "links": {
     "project": [
       {
-        "name": "Add Edit Records",
+        "name": "Search Dashboard",
         "icon": "blog_pencil",
         "url": "search.php"
       }

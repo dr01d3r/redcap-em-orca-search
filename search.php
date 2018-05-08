@@ -1,5 +1,5 @@
 <?php
-/** @var \ORCA\AddEditRecords\AddEditRecords $module */
+/** @var \ORCA\AddEditRecords\OrcaSearch $module */
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
@@ -14,11 +14,10 @@ $config = [
     "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
     "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],
-//    "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
-//        "pid" => $module->getPid(),
-//        "auto" => "1"
-//    ]),
-//    "new_record_auto_id" => getAutoId(), // TODO this takes a long time and makes the module load slowly
+    "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
+        "pid" => $module->getPid(),
+        "auto" => "1"
+    ]),
     "include_dag" => false,
     "user_dag" => null,
     "groups" => [],
@@ -113,6 +112,11 @@ if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj-
     $config["groups"] = array_combine($Proj->getUniqueGroupNames(), $Proj->getGroups());
 }
 
+if ($config["auto_numbering"]) {
+    // TODO this takes a long time and makes the module load slowly
+    $config["new_record_auto_id"] = getAutoId();
+}
+
 $fieldValues = null;
 if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
     $search_value = $_POST["search-value"];
@@ -204,7 +208,7 @@ foreach ($records as $record_id => $record) { // Record
             $match_index = strpos(strtolower($field_value), strtolower($_POST["search-value"]));
             $match_value = substr($field_value, $match_index, strlen($_POST["search-value"]));
             if ($match_index !== false) {
-                $field_value = str_replace($match_value, "<span class='add-edit-search-content'>{$match_value}</span>", $field_value);
+                $field_value = str_replace($match_value, "<span class='orca-search-content'>{$match_value}</span>", $field_value);
             } else {
                 // TODO some way to indicate to the user that the matching content is not on the latest instance of this value
             }
@@ -238,7 +242,7 @@ if (!empty($_POST)) {
 
 $module->setTemplateVariable("data", $results);
 
-$module->displayTemplate('add_edit_records.tpl');
+$module->displayTemplate('orca_search.tpl');
 
 $module->addTime();
 $module->outputTimerInfo();

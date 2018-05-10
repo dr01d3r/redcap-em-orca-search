@@ -19,7 +19,7 @@ To enhance searching REDCap records.  This module can also be used to create a c
 
 ## Prerequisites
 
-- REDCap >= 8.0.0
+- Tested against v8.3.2 and above, but likely fully functional all the way down to v8.0.0
 
 ## Permissions
 

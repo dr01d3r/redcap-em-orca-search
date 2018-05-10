@@ -38,6 +38,10 @@
         color: blue;
     }
 
+    #search-value, .orca-search-field-select {
+        display: none;
+    }
+
     .alert {
         border: 1px solid transparent !important;
         /*margin-bottom: 10px;*/
@@ -114,6 +118,19 @@
                     {else}
                         <input id="search-value" name="search-value" type="text" class="form-control" />
                     {/if}
+                    {foreach from=$config["search_fields"] key=field_name item=field_data}
+                        {if isset($field_data["dictionary_values"])}
+                            <select class="form-control orca-search-field-select" id="{$field_name}">
+                                {foreach from=$field_data["dictionary_values"] key=dd_key item=dd_value}
+                                    {if $field_name == $search_info["search-field"] && $search_info["search-value"] == $dd_key}
+                                        <option selected="true" value="{$dd_key}">{$dd_value}</option>
+                                    {else}
+                                        <option value="{$dd_key}">{$dd_value}</option>
+                                    {/if}
+                                {/foreach}
+                            </select>
+                        {/if}
+                    {/foreach}
                 </div>
                 <div class="form-group col-md-6">
                     {if $config["result_limit"] > 0}
@@ -179,6 +196,21 @@
 
 <script type="text/javascript">
     $(function () {
+        function setSearchControl(clearValue) {
+            $(".orca-search-field-select").hide();
+            $("#search-value").hide();
+
+            if (clearValue === true) {
+                $("#search-value").val('');
+            }
+
+            var val = $("#search-field").val();
+            if ($("#" + val).length > 0) {
+                $("#" + val).show().change();
+            } else {
+                $("#search-value").show();
+            }
+        }
         var table = $("#{$config["table_id"]}").DataTable({
             pageLength: 50,
             initComplete: function () {
@@ -238,9 +270,19 @@
             }
         });
 
+        $("#search-field").change(function() {
+            setSearchControl(true);
+        });
+
+        $(".orca-search-field-select").change(function() {
+            $("#search-value").val($(this).val());
+        });
+
         // disable form resubmit on refresh/back
         if ( window.history.replaceState ) {
             window.history.replaceState( null, null, window.location.href );
         }
+
+        setSearchControl(false);
     });
 </script>

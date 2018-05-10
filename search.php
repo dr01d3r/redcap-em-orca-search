@@ -1,5 +1,5 @@
 <?php
-/** @var \ORCA\AddEditRecords\OrcaSearch $module */
+/** @var \ORCA\OrcaSearch\OrcaSearch $module */
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
@@ -81,13 +81,18 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
     if ($Proj->isFormStatus($search_field["search_field_name"])) {
         $config["search_fields"][$search_field["search_field_name"]] = [
             "wildcard" => $search_field["search_field_name_wildcard"],
-            "value" => $Proj->forms[$Proj->metadata[$search_field["search_field_name"]]["form_name"]]["menu"] . " Status"
+            "value" => $Proj->forms[$Proj->metadata[$search_field["search_field_name"]]["form_name"]]["menu"] . " Status",
+            "dictionary_values" => $metadata["form_statuses"]
         ];
     } else {
         $config["search_fields"][$search_field["search_field_name"]] = [
             "wildcard" => $search_field["search_field_name_wildcard"],
             "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
         ];
+        if ($Proj->metadata[$search_field["search_field_name"]]["element_type"] !== "text") {
+            $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
+                $module->getDictionaryValuesFor($search_field["search_field_name"]);
+        }
     }
 }
 
@@ -107,7 +112,7 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
 if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj->getGroups()) > 0) {
     $config["include_dag"] = true;
     $config["display_fields"]["redcap_data_access_group"] = [
-        "label" => "Group"
+        "label" => "Data Access Group"
     ];
     $config["groups"] = array_combine($Proj->getUniqueGroupNames(), $Proj->getGroups());
 }

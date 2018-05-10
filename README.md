@@ -66,7 +66,6 @@ To enhance searching REDCap records.  This module can also be used to create a c
 - You must have design rights to the project to see the bookmark
 - If a project uses Data Access Groups, and the record_id field is displayed, I've done my best to ensure that column sorts as expected.
 - For projects with significant record counts (10,000+, especially if they use DAGs), the usage of getAutoId() for adding new records will increase the load times of the module.
-  - Until the performance of that function improves, or a replacement is found
   - For a baseline example, a project with ~45k records takes 4-8 seconds for getAutoId() to complete.
 - If you identify any issues, please submit an issue on this GitHub repo or make a post on the forums and tag me (@chris.kadolph)
 

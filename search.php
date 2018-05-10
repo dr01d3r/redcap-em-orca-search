@@ -34,6 +34,16 @@ $metadata = [
         0 => "Incomplete",
         1 => "Unverified",
         2 => "Complete"
+    ],
+    "custom_dictionary_values" => [
+        "yesno" => [
+            "1" => "Yes",
+            "0" => "No"
+        ],
+        "truefalse" => [
+            "1" => "True",
+            "0" => "False"
+        ]
     ]
 ];
 
@@ -89,9 +99,19 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
             "wildcard" => $search_field["search_field_name_wildcard"],
             "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
         ];
-        if ($Proj->metadata[$search_field["search_field_name"]]["element_type"] !== "text") {
-            $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
-                $module->getDictionaryValuesFor($search_field["search_field_name"]);
+        switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
+            case "select":
+            case "radio":
+            case "checkbox":
+                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
+                    $module->getDictionaryValuesFor($search_field["search_field_name"]);
+                break;
+            case "yesno":
+            case "truefalse":
+                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
+                    $metadata["custom_dictionary_values"][$Proj->metadata[$search_field["search_field_name"]]["element_type"]];
+                break;
+            default: break;
         }
     }
 }
@@ -204,8 +224,18 @@ foreach ($records as $record_id => $record) { // Record
             // special value handling for form statuses
             $field_value = $metadata["form_statuses"][$field_value];
         } else if ($Proj->metadata[$field_name]["element_type"] !== "text") {
-            // if it is anything but free text, find the structured non-key value
-            $field_value = $module->getDictionaryValuesFor($field_name)[$field_value];
+            switch ($Proj->metadata[$field_name]["element_type"]) {
+                case "select":
+                case "radio":
+                case "checkbox":
+                    $field_value = $module->getDictionaryValuesFor($field_name)[$field_value];
+                    break;
+                case "yesno":
+                case "truefalse":
+                    $field_value = $metadata["custom_dictionary_values"][$Proj->metadata[$field_name]["element_type"]][$field_value];
+                    break;
+                default: break;
+            }
         }
 
         // highlighting

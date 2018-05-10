@@ -37,6 +37,7 @@ trait REDCapUtils {
     }
 
     public function getDictionaryValuesFor($key) {
+        // TODO consider using $this->getChoiceLabels()
         return $this->flatten_type_values($this->getDataDictionary()[$key]['select_choices_or_calculations']);
     }
 

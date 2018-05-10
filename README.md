@@ -13,6 +13,9 @@ To enhance searching REDCap records.  This module can also be used to create a c
 - New Record support for projects with and without auto-numbering enabled
 - Result highlighting when searching with partial matching enabled
 - Support for searching through repeating forms
+- Data Access Group security
+  - Users in a DAG will only see results from within their DAG
+  - Users not assigned a DAG will see results regardless of DAG
 
 ## Prerequisites
 

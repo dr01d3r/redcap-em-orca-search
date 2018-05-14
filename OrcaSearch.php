@@ -43,8 +43,11 @@ class OrcaSearch extends AbstractExternalModule {
     }
 
     public function addTime($key = null) {
+        if ($key == null) {
+            $key = "STEP " . count($this->timers);
+        }
         $this->timers[] = [
-            "label" => $key ?? "STEP " . count($this->timers),
+            "label" => $key,
             "value" => microtime(true)
         ];
     }

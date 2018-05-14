@@ -260,8 +260,6 @@ foreach ($records as $record_id => $record) { // Record
  * Push all the results to Smarty templates for rendering
  */
 
-$module->setTemplateVariable("total_server_time", $time_data_processing_complete);
-
 if (false) { // TODO this will be replaced with an 'enable debugging' setting
     $debug["config"] = $config;
     if ((isset($debug) && !empty($debug))) {

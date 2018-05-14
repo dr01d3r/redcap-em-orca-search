@@ -81,5 +81,8 @@ To enhance searching REDCap records.  This module can also be used to create a c
 - Replacement of Add/Edit records, via hook redirect (possibly as a configuration)
 
 ## Version Info
-- 1.0
-   - Initial release
+- 1.0.0
+  - Initial release
+- 1.0.1
+  - Modified a null check to support PHP versions lower than 7.0
+  - Removed legacy timer code 

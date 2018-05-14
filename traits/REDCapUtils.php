@@ -9,7 +9,7 @@ trait REDCapUtils {
 
     private static $_REDCapConn;
 
-    protected static function _getREDCapConn():\mysqli{
+    protected static function _getREDCapConn() {
         if(empty(self::$_REDCapConn)){
             global $conn;
             self::$_REDCapConn = $conn;
@@ -17,14 +17,14 @@ trait REDCapUtils {
         return self::$_REDCapConn;
     }
 
-    public function getPid():int{
+    public function getPid() {
         if(empty($this->_pid) && array_key_exists("pid", $_GET)){
             $this->_pid = (int)$_GET["pid"];
         }
         return $this->_pid;
     }
 
-    public function getDataDictionary($format = 'array'){
+    public function getDataDictionary($format = 'array') {
         if(!array_key_exists($format, $this->_dataDictionary)){
             $this->_dataDictionary[$format] = \REDCap::getDataDictionary($format);
         }
@@ -33,7 +33,11 @@ trait REDCapUtils {
     }
 
     public function getDictionaryLabelFor($key) {
-        return $this->getDataDictionary("array")[$key]['field_label'] ?? $key;
+        $label = $this->getDataDictionary("array")[$key]['field_label'];
+        if (empty($label)) {
+            return $key;
+        }
+        return $label;
     }
 
     public function getDictionaryValuesFor($key) {
@@ -41,12 +45,11 @@ trait REDCapUtils {
         return $this->flatten_type_values($this->getDataDictionary()[$key]['select_choices_or_calculations']);
     }
 
-    public function comma_delim_to_key_value_array ($value) {
+    public function comma_delim_to_key_value_array($value) {
         $arr = explode(', ', trim($value));
         $sliced = array_slice($arr, 1, count($arr)-1, true);
         return array($arr[0] => implode(', ', $sliced));
     }
-
 
     public function array_flatten($array) {
         $return = array();
@@ -87,7 +90,7 @@ trait REDCapUtils {
 	 *
 	 * @throws \Exception
 	 */
-	public function getProjectRecordIds($fieldValues = null, $fieldValuesMatchType = "ALL", $instanceToMatch = "LATEST"){
+	public function getProjectRecordIds($fieldValues = null, $fieldValuesMatchType = "ALL", $instanceToMatch = "LATEST") {
 		$validFieldValueMatchTypes = ["ALL", "ANY"];
 		$validInstanceToMatchTypes = ["LATEST", "ALL"];
 		if(!in_array($fieldValuesMatchType, $validFieldValueMatchTypes)){
@@ -149,7 +152,7 @@ trait REDCapUtils {
 		return array_keys($filteredRecords);
 	}
 
-    private function _checkRecordInclusionForGetProjectRecordIds($recordData, $fieldValues, $fieldValuesMatchType, $fieldValuesToStrPosOrEquals){
+    private function _checkRecordInclusionForGetProjectRecordIds($recordData, $fieldValues, $fieldValuesMatchType, $fieldValuesToStrPosOrEquals) {
         $allFieldsMatched = true;
         $anyFieldsMatched = false;
         if(is_null($fieldValues)){

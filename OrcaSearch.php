@@ -23,10 +23,23 @@ class OrcaSearch extends AbstractExternalModule {
     {
         parent::__construct();
         define("MODULE_DOCROOT", $this->getModulePath());
-        $this->initializeSmarty();
     }
 
-    private function initializeSmarty() {
+    // TODO this function is only helpful if it is not also used to authorize the use of the module
+//    public function redcap_module_link_check_display($project_id, $link) {
+//        if ($this->getProjectSetting("replace_add_edit") === true && !(PAGE == "ExternalModules/index.php" && $_GET["prefix"] === "orca_search")) {
+//            return null;
+//        }
+//        return parent::redcap_module_link_check_display($project_id, $link);
+//    }
+
+    public function redcap_add_edit_records_page($project_id, $instrument, $event_id) {
+        if ($this->getProjectSetting("replace_add_edit") === true) {
+            redirect($this->getUrl("search.php"));
+        }
+    }
+
+    public function initializeSmarty() {
         self::$smarty = new \Smarty();
         self::$smarty->setTemplateDir(MODULE_DOCROOT . 'templates');
         self::$smarty->setCompileDir(MODULE_DOCROOT . 'templates_c');

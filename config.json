@@ -29,7 +29,16 @@
     "redcap-version-min": "",
     "redcap-version-max": ""
   },
+  "permissions": [
+    "redcap_add_edit_records_page"
+  ],
   "project-settings": [
+    {
+      "key": "replace_add_edit",
+      "name": "Redirect Add/Edit Records to Module",
+      "required": false,
+      "type": "checkbox"
+    },
     {
       "key": "search_limit",
       "name": "Limit the search results.",

@@ -3,6 +3,7 @@
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
+$module->initializeSmarty();
 $module->addTime();
 
 $config = [

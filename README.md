@@ -23,7 +23,7 @@ To enhance searching REDCap records.  This module can also be used to create a c
 
 ## Permissions
 
-- no permissions necessary
+- redcap_add_edit_records_page
 
 ## Configuration
 
@@ -34,6 +34,9 @@ To enhance searching REDCap records.  This module can also be used to create a c
 
 ## Options
 
+- **Redirect Add/Edit Records to Module**
+  - Check this option if you would like to "replace" the Add/Edit Records page with this module.
+  - When a user clicks the link, they will be redirected to the module's search page. 
 - **Limit the search results**
   - The results can be restricted to 500, 1000, 2000, 5000, or No Limit.  If the search results exceed that number, an error message will display and no results will show.
 - **Which instances to search through**
@@ -78,10 +81,11 @@ To enhance searching REDCap records.  This module can also be used to create a c
 - Support for displaying the latest instance that matched the search criteria
 - Custom configuration page
 - Row formatting (i.e. form status indicators)
-- Replacement of Add/Edit records, via hook redirect (possibly as a configuration)
 
 ## Version Info
-- 1.0.3 (**latest**)
+- 1.1.0
+  - New configuration option that allows you to redirect from Add/Edit Records, to the module search page
+- 1.0.3
   - Fixed a bug where "Add new record" would not function correctly when the user was in a DAG
 - 1.0.2
   - Additional removal of PHP 7 syntax

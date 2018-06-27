@@ -58,6 +58,10 @@
     .alert-success {
         border-color: #d6e9c6 !important;
     }
+
+    .dataTables_wrapper ul {
+        -webkit-padding-start: 20px;
+    }
 </style>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
@@ -171,7 +175,20 @@
                 {foreach from=$data key=record_id item=record}
                     <tr>
                         {foreach from=$config["display_fields"] key=col_name item=col_value}
-                            <td{if $record[$col_name]["__SORT__"]} data-sort="{$record["__SORT__"]}"{/if}>{$record[$col_name]}</td>
+                            <td{if !empty($record[$col_name]["__SORT__"])} data-sort="{$record[$col_name]["__SORT__"]}"{/if}>
+                                {if !empty($record[$col_name]["prefix"])}{$record[$col_name]["prefix"]}{/if}
+                                {if is_array($record[$col_name]["value"])}
+                                    {if count($record[$col_name]["value"]) > 0}
+                                        <ul>
+                                            {foreach from=$record[$col_name]["value"] key=sub_index item=sub_value}
+                                                <li>{$sub_value}</li>
+                                            {/foreach}
+                                        </ul>
+                                    {/if}
+                                {else}
+                                    {$record[$col_name]["value"]}
+                                {/if}
+                            </td>
                         {/foreach}
                         <td>
                             <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">

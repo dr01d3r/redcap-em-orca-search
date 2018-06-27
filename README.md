@@ -6,6 +6,10 @@ A configurable, searchable, and performant, list dashboard.
 
 To enhance searching REDCap records.  This module can also be used to create a custom list dashboard.
 
+### Disclaimer
+
+This module does not yet support repeating events.
+
 ## Features
 
 - Configurable field search options
@@ -23,7 +27,7 @@ To enhance searching REDCap records.  This module can also be used to create a c
 
 ## Permissions
 
-- redcap_add_edit_records_page
+- redcap_every_page_top
 
 ## Configuration
 
@@ -36,7 +40,7 @@ To enhance searching REDCap records.  This module can also be used to create a c
 
 - **Redirect Add/Edit Records to Module**
   - Check this option if you would like to "replace" the Add/Edit Records page with this module.
-  - When a user clicks the link, they will be redirected to the module's search page. 
+  - When a user clicks the link, they will be directed to the module's search page. 
 - **Limit the search results**
   - The results can be restricted to 500, 1000, 2000, 5000, or No Limit.  If the search results exceed that number, an error message will display and no results will show.
 - **Which instances to search through**
@@ -81,16 +85,3 @@ To enhance searching REDCap records.  This module can also be used to create a c
 - Support for displaying the latest instance that matched the search criteria
 - Custom configuration page
 - Row formatting (i.e. form status indicators)
-
-## Version Info
-- 1.1.0
-  - New configuration option that allows you to redirect from Add/Edit Records, to the module search page
-- 1.0.3
-  - Fixed a bug where "Add new record" would not function correctly when the user was in a DAG
-- 1.0.2
-  - Additional removal of PHP 7 syntax
-- 1.0.1
-  - Modified a null check to support PHP versions lower than 7.0
-  - Removed legacy timer code
-- 1.0.0
-  - Initial release

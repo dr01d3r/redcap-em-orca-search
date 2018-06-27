@@ -36,6 +36,10 @@ $metadata = [
         1 => "Unverified",
         2 => "Complete"
     ],
+    "unstructured_field_types" => [
+        "text",
+        "textarea"
+    ],
     "custom_dictionary_values" => [
         "yesno" => [
             "1" => "Yes",
@@ -165,6 +169,10 @@ if ($recordCount === 0) {
     $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
 }
 
+if (empty($config["search_fields"]) || empty($config["display_fields"])) {
+    $config["errors"][] = "This module has not yet been configured.  Please go to the <b>" . $lang["global_142"] . "</b> area in the project sidebar to configure it.";
+}
+
 /*
  * Record Processing
  */
@@ -176,7 +184,9 @@ foreach ($records as $record_id => $record) { // Record
         ]);
 
     $record_info = [
-        "record_id" => $record_id,
+        "record_id" => [
+            "value" => $record_id
+        ],
         "dashboard_url" => $dashboard_url
     ];
 
@@ -189,16 +199,16 @@ foreach ($records as $record_id => $record) { // Record
         $field_form_event_id = $metadata["forms"][$field_form_name]["event_id"];
 
         // initialize some helper variables/arrays
+        $field_type = $Proj->metadata[$field_name]["element_type"];
         $field_value = null;
         $form_values = [];
-        $field_value_suffix = "";
 
         // set the form_values array with the data we want to look at
         if ($metadata["forms"][$field_form_name]["repeating"]) {
             // TODO (ALL vs LATEST) consider finding the latest instance where the search value was found, and display that instead of always the latest
             $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
             if ($config["show_instance_badge"] === true) {
-                $field_value_suffix = "<span class='badge'>" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . "</span>";
+                $record_info[$field_name]["prefix"] = "<span class='badge'>" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . "</span>";
             }
         } else {
             $form_values = $record[$field_form_event_id];
@@ -206,7 +216,7 @@ foreach ($records as $record_id => $record) { // Record
 
         // special handling for dag as well as structured data fields
         if ($config["include_dag"] === true && !isset($record_info["redcap_data_access_group"])) {
-            $record_info["redcap_data_access_group"] = $config["groups"][$form_values["redcap_data_access_group"]];
+            $record_info["redcap_data_access_group"]["value"] = $config["groups"][$form_values["redcap_data_access_group"]];
         }
 
         // set the raw value of the field
@@ -215,21 +225,30 @@ foreach ($records as $record_id => $record) { // Record
         if ($field_name === $Proj->table_pk) {
             $parts = explode("-", $field_value);
             if (count($parts) > 1) {
-                $record_info["__SORT__"] = implode(".", [$parts[0], str_pad($parts[1], 10, "0", STR_PAD_LEFT)]);
+                $record_info[$field_name]["__SORT__"] = implode(".", [$parts[0], str_pad($parts[1], 10, "0", STR_PAD_LEFT)]);
             } else {
-                $record_info["__SORT__"] = $field_value;
+                $record_info[$field_name]["__SORT__"] = $field_value;
             }
         }
 
         if ($field_info["is_form_status"] === true) {
             // special value handling for form statuses
             $field_value = $metadata["form_statuses"][$field_value];
-        } else if ($Proj->metadata[$field_name]["element_type"] !== "text") {
-            switch ($Proj->metadata[$field_name]["element_type"]) {
+        } else if (!in_array($field_type, $metadata["unstructured_field_types"])) {
+            switch ($field_type) {
                 case "select":
                 case "radio":
-                case "checkbox":
                     $field_value = $module->getDictionaryValuesFor($field_name)[$field_value];
+                    break;
+                case "checkbox":
+                    $temp_field_array = [];
+                    $field_value_dd = $module->getDictionaryValuesFor($field_name);
+                    foreach ($field_value as $field_value_key => $field_value_value) {
+                        if ($field_value_value === "1") {
+                            $temp_field_array[$field_value_key] = $field_value_dd[$field_value_key];
+                        }
+                    }
+                    $field_value = $temp_field_array;
                     break;
                 case "yesno":
                 case "truefalse":
@@ -239,8 +258,13 @@ foreach ($records as $record_id => $record) { // Record
             }
         }
 
-        // highlighting
-        if ($field_name === $_POST["search-field"] && $config["search_fields"][$field_name]["wildcard"]) {
+        /*
+         * Highlighting
+         * - selected search field
+         * - is a field type that is unstructured
+         * - was selected as a wildcard in the config
+         */
+        if ($field_name === $_POST["search-field"] && in_array($field_type, $metadata["unstructured_field_types"]) && $config["search_fields"][$field_name]["wildcard"]) {
             $match_index = strpos(strtolower($field_value), strtolower($_POST["search-value"]));
             $match_value = substr($field_value, $match_index, strlen($_POST["search-value"]));
             if ($match_index !== false) {
@@ -250,8 +274,7 @@ foreach ($records as $record_id => $record) { // Record
             }
         }
 
-        // prepend the instance prefix to the value (if any) and add it to the record info
-        $record_info[$field_name] = $field_value . $field_value_suffix;
+        $record_info[$field_name]["value"] = $field_value;
     }
     // add record data to the full dataset
     $results[$record_id] = $record_info;

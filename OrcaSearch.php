@@ -33,9 +33,21 @@ class OrcaSearch extends AbstractExternalModule {
 //        return parent::redcap_module_link_check_display($project_id, $link);
 //    }
 
-    public function redcap_add_edit_records_page($project_id, $instrument, $event_id) {
+    public function redcap_every_page_top($project_id) {
+        global $lang;
         if ($this->getProjectSetting("replace_add_edit") === true) {
-            redirect($this->getUrl("search.php"));
+            ?>
+            <script type='text/javascript'>
+                if(typeof OrcaSearch === 'undefined') {
+                    var OrcaSearch = {
+                        addEditLinkText: "<?=$lang['bottom_62']?>",
+                        moduleLinkType: "<?="add_edit_replace"?>"
+                    };
+                }
+            </script>
+            <?php
+            echo "<link rel='stylesheet' type='text/css' href='" . $this->getUrl('css/orca_search.css') . "' />";
+            echo "<script src='" . $this->getUrl('js/orca_search.js') . "'></script>";
         }
     }
 

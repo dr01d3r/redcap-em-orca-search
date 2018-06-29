@@ -1,3 +1,5 @@
+## 1.2.1
+- adjusted the way the search page url is obtained to support older versions of REDCap
 ## 1.2.0
 - switched add/edit redirect with an href replace on every page top
 - added some html styling to config.json

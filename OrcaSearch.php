@@ -25,13 +25,9 @@ class OrcaSearch extends AbstractExternalModule {
         define("MODULE_DOCROOT", $this->getModulePath());
     }
 
-    // TODO this function is only helpful if it is not also used to authorize the use of the module
-//    public function redcap_module_link_check_display($project_id, $link) {
-//        if ($this->getProjectSetting("replace_add_edit") === true && !(PAGE == "ExternalModules/index.php" && $_GET["prefix"] === "orca_search")) {
-//            return null;
-//        }
-//        return parent::redcap_module_link_check_display($project_id, $link);
-//    }
+    public function redcap_module_link_check_display($project_id, $link) {
+        return true;
+    }
 
     public function redcap_every_page_top($project_id) {
         global $lang;

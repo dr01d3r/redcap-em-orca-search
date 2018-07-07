@@ -21,9 +21,16 @@ This module does not yet support repeating events.
   - Users in a DAG will only see results from within their DAG
   - Users not assigned a DAG will see results regardless of DAG
 
-## Prerequisites
+## Testing & Validation
 
-- Tested against v8.3.2 and above, but likely fully functional all the way down to v8.0.0
+- REDCap
+  - 8.2.2
+  - 8.3.2
+  - 8.4.5
+  - 8.5.0
+  - 8.6.0
+- PHP
+  - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0
 
 ## Permissions
 
@@ -55,10 +62,10 @@ This module does not yet support repeating events.
 - **Search Fields**
   - This repeating configuration allows you to select the fields that you want to use as search fields.
   - Fields will display in the dropdown, in the order that exist in the config.
-  - Fields that are dropdown, radio, form status, etc., will display a dropdown instead of a text box, for filtering by value.
-    - Leave the **Return Partial Matches** option unchecked; otherwise, unintended results may occur.
+  - Fields that are select, radio, form status, etc., will display a dropdown instead of a text box, for filtering by value.
   - **Return Partial Matches**
     - This option allows you to do a 'wildcard' search on that field (i.e. searching **wis** in a state search will return results for **Wis**consin)
+    - **NOTE:** This option is ignored if the field type is **radio**, **select**, or **checkbox**
 - **Display Fields**
   - These are the fields you wish to see in the results table
   - Text values will display as-is, while structured data will show the display values.

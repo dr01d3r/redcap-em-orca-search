@@ -125,7 +125,11 @@ trait REDCapUtils {
 			if(!is_null($row["instance"])){
 				$instance = $row["instance"];
 			}
-			$allRecords[$row["record"]]["instances"][$instance][$row["field_name"]] = $row["value"];
+			if (array_key_exists($row["field_name"], $allRecords[$row["record"]]["instances"][$instance])) {
+                $allRecords[$row["record"]]["instances"][$instance][$row["field_name"]] = $allRecords[$row["record"]]["instances"][$instance][$row["field_name"]] . "|" . $row["value"];
+            } else {
+                $allRecords[$row["record"]]["instances"][$instance][$row["field_name"]] = $row["value"];
+            }
 		}
 		$primaryResult->free_result();
 

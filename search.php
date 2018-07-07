@@ -95,15 +95,28 @@ if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
 foreach ($module->getSubSettings("search_fields") as $search_field) {
     if ($Proj->isFormStatus($search_field["search_field_name"])) {
         $config["search_fields"][$search_field["search_field_name"]] = [
-            "wildcard" => $search_field["search_field_name_wildcard"],
+            "wildcard" => false,
             "value" => $Proj->forms[$Proj->metadata[$search_field["search_field_name"]]["form_name"]]["menu"] . " Status",
             "dictionary_values" => $metadata["form_statuses"]
         ];
     } else {
         $config["search_fields"][$search_field["search_field_name"]] = [
-            "wildcard" => $search_field["search_field_name_wildcard"],
             "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
         ];
+        // override wildcard config in certain cases; otherwise, take what the user specified
+        switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
+            case "select":
+            case "radio":
+                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = false;;
+                break;
+            case "checkbox":
+                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = true;
+                break;
+            default:
+                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = $search_field["search_field_name_wildcard"];
+                break;
+        }
+        // set structured values for display in search options
         switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
             case "select":
             case "radio":

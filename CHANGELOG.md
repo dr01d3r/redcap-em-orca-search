@@ -1,5 +1,8 @@
 ## 1.2.3
-- Added a workaround for an issue in earlier versions of REDCap (i.e. 8.2.2) that would allow hook functions of the module to execute outside of project context
+- Added a workaround for a issue in earlier versions of REDCap that would allow hook functions of the module to execute outside of project context
+- Fixed a bug where searching against a checkbox field would not return a result when more than one value was checked
+- Overrides are now in place for field types of 'radio', 'select', and 'checkbox' to prevent searches from returning unintended results
+- Updated the UI for better responsive support on smaller sized browsers 
 ## 1.2.2
 - All users will see the link and have access to the module, instead of just those with design rights
 ## 1.2.1

@@ -30,6 +30,7 @@ class OrcaSearch extends AbstractExternalModule {
     }
 
     public function redcap_every_page_top($project_id) {
+		if (empty($project_id)) return;
         global $lang;
         if ($this->getProjectSetting("replace_add_edit") === true) {
             ?>

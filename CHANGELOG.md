@@ -1,3 +1,5 @@
+## 1.2.3
+- Added a workaround for an issue in earlier versions of REDCap (i.e. 8.2.2) that would allow hook functions of the module to execute outside of project context
 ## 1.2.2
 - All users will see the link and have access to the module, instead of just those with design rights
 ## 1.2.1

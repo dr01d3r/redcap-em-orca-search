@@ -111,11 +111,7 @@
         },
         {
           "key": "search_field_name_wildcard",
-<<<<<<< HEAD
-          "name": "Return Partial Matches?<br/><small><b>NOTE:</b> This setting is only considered for field types of <kbd>text</kbd> and <kbd>textarea</kbd></small>",
-=======
           "name": "Return Partial Matches?<br/><small><b>NOTE:</b> This setting is ignored for field types of <kbd>select</kbd>, <kbd>radio</kbd>, and <kbd>checkbox</kbd></small>",
->>>>>>> 6972c0a5bfa66b10a0f1c1310e3b295aefc60c98
           "required": true,
           "type": "checkbox",
           "repeatable": false

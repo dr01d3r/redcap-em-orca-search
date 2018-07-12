@@ -1,4 +1,9 @@
-## 1.2.3
+## 1.3.0 (*pending*)
+- Adjusted the display of instance badges
+  - They are now pushed over to the right, to not interfere with the content
+- Prep work for REDCap v8.7.0 migration to Bootstrap 4
+- Miscellaneous fixes
+## 1.2.3 (latest)
 - Added a workaround for a issue in earlier versions of REDCap that would allow hook functions of the module to execute outside of project context
 - Fixed a bug where searching against a checkbox field would not return a result when more than one value was checked
 - Overrides are now in place for field types of 'radio', 'select', and 'checkbox' to prevent searches from returning unintended results

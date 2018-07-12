@@ -6,6 +6,7 @@ trait REDCapUtils {
 
     private $_pid = 0;
     private $_dataDictionary = [];
+    private $timers = [];
 
     private static $_REDCapConn;
 
@@ -198,5 +199,64 @@ trait REDCapUtils {
         } else {
             echo "<pre>$content</pre>";
         }
+    }
+
+    public function addTime($key = null) {
+        if ($key == null) {
+            $key = "STEP " . count($this->timers);
+        }
+        $this->timers[] = [
+            "label" => $key,
+            "value" => microtime(true)
+        ];
+    }
+
+    public function outputTimerInfo($showAll = false) {
+        $initTime = null;
+        $preTime = null;
+        $curTime = null;
+        foreach ($this->timers as $index => $timeInfo) {
+            $curTime = $timeInfo;
+            if ($preTime == null) {
+                $initTime = $timeInfo;
+            } else {
+                $calcTime = round($curTime["value"] - $preTime["value"], 4);
+                if ($showAll) {
+                    echo "<p><i>{$timeInfo["label"]}: {$calcTime}</i></p>";
+                }
+            }
+            $preTime = $curTime;
+        }
+        $calcTime = round($curTime["value"] - $initTime["value"], 4);
+        echo "<p><i>Total Processing Time: {$calcTime} seconds</i></p>";
+    }
+
+    public function versionCompare($v1, $v2, $debug = false) {
+        $v1parts = explode(".", $v1);
+        $v2parts = explode(".", $v2);
+
+        if (count($v1parts) != count($v2parts)) {
+            throw new \InvalidArgumentException("$v1 and $v2 are not comparable");
+        }
+
+        for ($i = 0; $i < count($v1parts); $i++) {
+            if ($v1parts[$i] === $v2parts[$i]) continue;
+            if ($v1parts[$i] < $v2parts[$i]) {
+                if ($debug === true)  {
+                    self::preout("$v1 is less than $v2");
+                }
+                return -1;
+            }
+            else {
+                if ($debug === true)  {
+                    self::preout("$v1 is greater than $v2");
+                }
+                return 1;
+            }
+        }
+        if ($debug === true)  {
+            self::preout("$v1 is equal to $v2");
+        }
+        return 0;
     }
 }

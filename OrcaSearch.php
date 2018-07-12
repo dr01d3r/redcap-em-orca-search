@@ -17,7 +17,6 @@ class OrcaSearch extends AbstractExternalModule {
     use \ORCA\OrcaSearch\REDCapUtils;
 
     private static $smarty;
-    public $timers = [];
 
     public function __construct()
     {
@@ -63,35 +62,5 @@ class OrcaSearch extends AbstractExternalModule {
 
     public function displayTemplate($template) {
         self::$smarty->display($template);
-    }
-
-    public function addTime($key = null) {
-        if ($key == null) {
-            $key = "STEP " . count($this->timers);
-        }
-        $this->timers[] = [
-            "label" => $key,
-            "value" => microtime(true)
-        ];
-    }
-
-    public function outputTimerInfo($showAll = false) {
-        $initTime = null;
-        $preTime = null;
-        $curTime = null;
-        foreach ($this->timers as $index => $timeInfo) {
-            $curTime = $timeInfo;
-            if ($preTime == null) {
-                $initTime = $timeInfo;
-            } else {
-                $calcTime = round($curTime["value"] - $preTime["value"], 4);
-                if ($showAll) {
-                    echo "<p><i>{$timeInfo["label"]}: {$calcTime}</i></p>";
-                }
-            }
-            $preTime = $curTime;
-        }
-        $calcTime = round($curTime["value"] - $initTime["value"], 4);
-        echo "<p><i>Total Processing Time: {$calcTime} seconds</i></p>";
     }
 }

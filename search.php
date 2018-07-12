@@ -312,6 +312,12 @@ if (!empty($_POST)) {
 
 $module->setTemplateVariable("data", $results);
 
+// TODO REDCap 8.7.0
+if ($module->versionCompare(REDCAP_VERSION, "8.7.0") >= 0) {
+
+} else {
+
+}
 $module->displayTemplate('orca_search.tpl');
 
 $module->addTime();

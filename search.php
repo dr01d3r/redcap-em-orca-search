@@ -221,7 +221,6 @@ foreach ($records as $record_id => $record) { // Record
             // TODO (ALL vs LATEST) consider finding the latest instance where the search value was found, and display that instead of always the latest
             $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
             if ($config["show_instance_badge"] === true) {
-                $record_info[$field_name]["prefix"] = "<span class='badge'>" . key($record["repeat_instances"][$field_form_event_id][$field_form_name]) . "</span>";
             }
         } else {
             $form_values = $record[$field_form_event_id];

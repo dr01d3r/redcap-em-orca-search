@@ -202,7 +202,6 @@
                     <tr>
                         {foreach from=$config["display_fields"] key=col_name item=col_value}
                             <td{if !empty($record[$col_name]["__SORT__"])} data-sort="{$record[$col_name]["__SORT__"]}"{/if}>
-                                {if !empty($record[$col_name]["prefix"])}{$record[$col_name]["prefix"]}{/if}
                                 {if is_array($record[$col_name]["value"])}
                                     {if count($record[$col_name]["value"]) > 0}
                                         <ul>

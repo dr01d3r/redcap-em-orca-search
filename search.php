@@ -107,7 +107,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
         switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
             case "select":
             case "radio":
-                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = false;;
+                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = false;
                 break;
             case "checkbox":
                 $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = true;

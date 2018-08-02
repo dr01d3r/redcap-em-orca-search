@@ -80,6 +80,7 @@ This module does not yet support repeating events.
 
 ## Considerations
 
+- DateTime fields are displayed and searched using the values as they are stored in the database (YYYY-MM-DD).
 - If a project uses Data Access Groups, and the record_id field is displayed, I've done my best to ensure that column sorts as expected.
 - For projects with significant record counts (10,000+, especially if they use DAGs), the usage of getAutoId() for adding new records will increase the load times of the module.
   - For a baseline example, a project with ~45k records takes 4-8 seconds for getAutoId() to complete.
@@ -88,6 +89,7 @@ This module does not yet support repeating events.
 ## Future Support
 
 - Multiple Filters
+- Use DateTime format from the Data Dictionary rather than raw database value 
 - Support for displaying the latest instance that matched the search criteria
 - Custom configuration page
 - Row formatting (i.e. form status indicators)

@@ -1,7 +1,7 @@
-## 1.3.0
+## 2.0.0
+- Added support for Bootstrap 4 in REDCap v8.7.0+
 - Adjusted the display of instance badges
   - They are now pushed over to the right, to not interfere with the content
-- Prep work for REDCap v8.7.0 migration to Bootstrap 4
 - Miscellaneous fixes
 ## 1.2.3
 - Added a workaround for a issue in earlier versions of REDCap that would allow hook functions of the module to execute outside of project context

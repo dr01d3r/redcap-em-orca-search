@@ -35,7 +35,7 @@
   "project-settings": [
     {
       "key": "replace_add_edit",
-      "name": "Replace the <span style='color: #800000;'>Add/Edit Records</span> link with a link to this module's search page<br/><small><b>NOTE:</b> a <span class='glyphicon glyphicon-info-sign' style='display: inline;color: #800000;'></span> tooltip icon will appear next to the link when this is enabled</small>",
+      "name": "Replace the <span style='color: #800000;'>Add/Edit Records</span> link with a link to this module's search page<br/><small><b>NOTE:</b> a <i class='fas fa-info-circle' style='display: inline;color: #800000;'></i> tooltip icon will appear next to the link when this is enabled</small>",
       "required": false,
       "type": "checkbox"
     },

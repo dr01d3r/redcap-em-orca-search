@@ -1,75 +1,18 @@
 {* Smarty *}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
-<style>
-    #orca_search_table > thead > tr > th {
-        text-overflow: ellipsis;
-    }
-
-    #orca_search_table > tbody > tr,
-    #orca_search_table > tbody > tr > td {
-        position: relative;
-        vertical-align: middle;
-    }
-
-    #orca_search_table {
-        display: none;
-    }
-
-    #orca_search_table_ph {
-        font-size: 20px;
-        font-style: italic;
-        padding: 35px;
-    }
-
-    .dataTables_wrapper > div.row:first-child {
-        padding: 10px 10px 0px 10px !important;
-    }
-
-    .dataTables_wrapper > div.row:last-child {
-        padding: 0px 10px 10px 10px !important;
-    }
-
-    #orca_search_table .jqbuttonmed {
-        white-space: nowrap;
-    }
-
-    .orca-search-content {
-        font-weight: bold;
-        color: blue;
-    }
-
-    #search-value, .orca-search-field-select {
-        display: none;
-    }
-
-    .alert {
-        border: 1px solid transparent !important;
-    }
-    .alert-danger {
-        border-color: #ebccd1 !important;
-    }
-    .alert-warning {
-        border-color: #faebcc !important;
-    }
-    .alert-info {
-        border-color: #bce8f1 !important;
-    }
-    .alert-success {
-        border-color: #d6e9c6 !important;
-    }
-
-    .dataTables_wrapper ul {
-        -webkit-padding-start: 20px;
-        margin-bottom: 0px;
-    }
-</style>
-<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
-
+<div class="projhdr">
+    <img src="{$config["redcap_images_path"]}blog_pencil.gif" /> Search Dashboard
+</div>
 {foreach from=$config["messages"] item=message}
     <div class="alert alert-info alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <b>Info:</b> {$message}
+    </div>
+{/foreach}
+
+{foreach from=$config["warnings"] item=warning}
+    <div class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <b>Warning:</b> {$warning}
     </div>
 {/foreach}
 
@@ -80,12 +23,12 @@
     </div>
 {/foreach}
 
-<div class="panel panel-default">
+<div class="card">
     <!-- Default panel contents -->
-    <div class="panel-heading">
+    <div class="card-header">
         <form method="post" action="">
             <div class="row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-lg">
                     <label for="search-field">Select Search Field</label><br/>
                     <select name="search-field" id="search-field" class="form-control">
                         {foreach from=$config["search_fields"] key=field_name item=field_data}
@@ -99,24 +42,24 @@
                 </div>
                 {* This condition is copied below for responsiveness support *}
                 {if $config["auto_numbering"]}
-                    <div class="form-group col-md-6 hidden-sm hidden-xs">
+                    <div class="form-group col-lg d-none d-lg-block">
                         <label>New Record</label><br/>
-                        <button id="orca-search-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
+                        <button id="orca-search-new-record" type="button" class="btn btn-secondary form-control">{$config["new_record_text"]}</button>
                     </div>
                 {else}
-                    <div class="col-md-6 hidden-sm hidden-xs">
+                    <div class="col-lg d-none d-lg-block">
                         <label>New Record</label><br/>
                         <div class="input-group">
                             <input id="orca-search-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
                             <span class="input-group-btn">
-                                <button id="orca-search-new-record" type="button" class="btn btn-default">{$config["new_record_text"]}</button>
+                                <button id="orca-search-new-record" type="button" class="btn btn-secondary">{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>
                 {/if}
             </div>
             <div class="row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-lg">
                     <label for="search-field">Search Text</label><br/>
                     {if !empty($search_info["search-value"])}
                         <input id="search-value" name="search-value" type="text" class="form-control" value="{$search_info["search-value"]}" />
@@ -138,7 +81,7 @@
                     {/foreach}
                 </div>
                 {* This is copied below for responsiveness support *}
-                <div class="form-group col-md-6 hidden-xs hidden-sm">
+                <div class="form-group col-lg d-none d-lg-block">
                     {if $config["result_limit"] > 0}
                         <label>Limit: <i style="font-weight: normal;">{$config["result_limit"]}</i></label>
                     {else}
@@ -148,24 +91,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-xs-12 hidden-md hidden-lg">
+                <div class="form-group col-12 d-lg-none">
                     {if $config["result_limit"] > 0}
                         <label>Limit: <i style="font-weight: normal;">{$config["result_limit"]}</i></label>
                     {/if}
                     <button id="orca-search" type="button" class="btn btn-info form-control">Search</button>
                 </div>
                 {if $config["auto_numbering"]}
-                    <div class="form-group col-xs-12 hidden-md hidden-lg">
+                    <div class="form-group col-12 d-lg-none">
                         <label>New Record</label><br/>
-                        <button id="orca-search-new-record" type="button" class="btn btn-default form-control">{$config["new_record_text"]}</button>
+                        <button id="orca-search-new-record" type="button" class="btn btn-secondary form-control">{$config["new_record_text"]}</button>
                     </div>
                 {else}
-                    <div class="col-xs-12 hidden-md hidden-lg">
+                    <div class="col-12 d-lg-none">
                         <label>New Record</label><br/>
                         <div class="input-group">
                             <input id="orca-search-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
                             <span class="input-group-btn">
-                                <button id="orca-search-new-record" type="button" class="btn btn-default">{$config["new_record_text"]}</button>
+                                <button id="orca-search-new-record" type="button" class="btn btn-secondary">{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>
@@ -183,55 +126,53 @@
             <b>Note:</b> <i>Search results will be limited to the <b>{$config["groups"][$config["user_dag"]]}</b> Data Access Group.</i>
         {/if}
     </div>
-    <div>
+    <div class="card-body">
         <div id="orca_search_table_ph">
             Loading data. Please wait...
         </div>
-        <div class="table-responsive">
-            <table id="orca_search_table" class="table table-bordered table-condensed table-hover">
-                <thead>
+        <table id="orca_search_table" class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+                {foreach from=$config["display_fields"] key=col_name item=col_value}
+                    <th class="header">{$col_value["label"]}</th>
+                {/foreach}
+                <th class="header">Record Home</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach from=$data key=record_id item=record}
                 <tr>
                     {foreach from=$config["display_fields"] key=col_name item=col_value}
-                        <th class="header">{$col_value["label"]}</th>
-                    {/foreach}
-                    <th class="header">Record Home</th>
-                </tr>
-                </thead>
-                <tbody>
-                {foreach from=$data key=record_id item=record}
-                    <tr>
-                        {foreach from=$config["display_fields"] key=col_name item=col_value}
-                            <td{if !empty($record[$col_name]["__SORT__"])} data-sort="{$record[$col_name]["__SORT__"]}"{/if}>
-                                {if !empty($record[$col_name]["badge"])}
-                                    <span class="badge pull-right">{$record[$col_name]["badge"]}</span>
+                        <td{if !empty($record[$col_name]["__SORT__"])} data-sort="{$record[$col_name]["__SORT__"]}"{/if}>
+                            {if !empty($record[$col_name]["badge"])}
+                                <span class="badge pull-right">{$record[$col_name]["badge"]}</span>
+                            {/if}
+                            {if is_array($record[$col_name]["value"])}
+                                {if count($record[$col_name]["value"]) > 0}
+                                    <ul>
+                                        {foreach from=$record[$col_name]["value"] key=sub_index item=sub_value}
+                                            <li>{$sub_value}</li>
+                                        {/foreach}
+                                    </ul>
                                 {/if}
-                                {if is_array($record[$col_name]["value"])}
-                                    {if count($record[$col_name]["value"]) > 0}
-                                        <ul>
-                                            {foreach from=$record[$col_name]["value"] key=sub_index item=sub_value}
-                                                <li>{$sub_value}</li>
-                                            {/foreach}
-                                        </ul>
-                                    {/if}
-                                {else}
-                                    {$record[$col_name]["value"]}
-                                {/if}
-                            </td>
-                        {/foreach}
-                        <td>
-                            <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
-                                <span class="ui-button-text">
-                                    <span class="ui-button-text">
-                                        <span class="glyphicon glyphicon-edit"></span>&nbsp;Open
-                                    </span>
-                                </span>
-                            </a>
+                            {else}
+                                {$record[$col_name]["value"]}
+                            {/if}
                         </td>
-                    </tr>
-                {/foreach}
-                </tbody>
-            </table>
-        </div>
+                    {/foreach}
+                    <td>
+                        <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                            <span class="ui-button-text">
+                                <span class="ui-button-text">
+                                    <i class="fas fa-edit"></i>&nbsp;Open
+                                </span>
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -256,7 +197,7 @@
                 $("#search-value").show();
             }
         }
-        var table = $("#orca_search_table").DataTable({
+        var table = $("#orca_search_table").dataTable({
             pageLength: 50,
             initComplete: function () {
                 $("#orca_search_table").css('width', '100%').show();
@@ -266,7 +207,7 @@
 
         $("input[type='search']").on("keydown keypress", function (event) {
             if (event.which === 8) {
-                table.draw();
+                tabledraw();
                 event.stopPropagation();
             }
         });
@@ -277,32 +218,32 @@
 
         $("body").on("click", "#orca-search-new-record", function() {
             {if $config["auto_numbering"]}
-                window.location.href = '{$config["new_record_url"]}' + '&id=' + '{$config["new_record_auto_id"]}' + addGoogTrans();
+            window.location.href = '{$config["new_record_url"]}' + '&id=' + '{$config["new_record_auto_id"]}' + addGoogTrans();
             {else}
-                var refocus = false;
-                var idval = trim($('#orca-search-new-record-id').val());
-                if (idval.length < 1) {
-                    return;
+            var refocus = false;
+            var idval = trim($('#orca-search-new-record-id').val());
+            if (idval.length < 1) {
+                return;
+            }
+            if (idval.length > 100) {
+                refocus = true;
+                alert('The value entered must be 100 characters or less in length');
+            }
+            if (refocus) {
+                setTimeout(function(){ document.getElementById('orca-search-new-record-id').focus(); },10);
+            } else {
+                $('#orca-search-new-record-id').val(idval);
+                idval = $('#orca-search-new-record-id').val();
+                idval = idval.replace(/&quot;/g,''); // HTML char code of double quote
+                var validRecordName = recordNameValid(idval);
+                if (validRecordName !== true) {
+                    $('#orca-search-new-record-id').val('');
+                    alert(validRecordName);
+                    $('#orca-search-new-record-id').focus();
+                    return false;
                 }
-                if (idval.length > 100) {
-                    refocus = true;
-                    alert('The value entered must be 100 characters or less in length');
-                }
-                if (refocus) {
-                    setTimeout(function(){ document.getElementById('orca-search-new-record-id').focus(); },10);
-                } else {
-                    $('#orca-search-new-record-id').val(idval);
-                    idval = $('#orca-search-new-record-id').val();
-                    idval = idval.replace(/&quot;/g,''); // HTML char code of double quote
-                    var validRecordName = recordNameValid(idval);
-                    if (validRecordName !== true) {
-                        $('#orca-search-new-record-id').val('');
-                        alert(validRecordName);
-                        $('#orca-search-new-record-id').focus();
-                        return false;
-                    }
-                    window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
-                }
+                window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
+            }
             {/if}
         });
 

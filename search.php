@@ -14,6 +14,8 @@ $config = [
     "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
     "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],
+    "redcap_images_path" => APP_PATH_IMAGES,
+    "module_version" => $module->VERSION,
     "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
         "pid" => $module->getPid(),
         "auto" => "1"
@@ -311,13 +313,13 @@ if (!empty($_POST)) {
 
 $module->setTemplateVariable("data", $results);
 
-// TODO REDCap 8.7.0
-if ($module->versionCompare(REDCAP_VERSION, "8.7.0") >= 0) {
+echo "<link rel='stylesheet' type='text/css' href='" . $module->getUrl('css/orca_search.css') . "' />";
 
+if (version_compare(REDCAP_VERSION, "8.7.0", ">=")) {
+    $module->displayTemplate('bs4/orca_search.tpl');
 } else {
-
+    $module->displayTemplate('bs3/orca_search.tpl');
 }
-$module->displayTemplate('orca_search.tpl');
 
 $module->addTime();
 $module->outputTimerInfo();

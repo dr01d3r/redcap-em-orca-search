@@ -28,7 +28,8 @@ This module does not yet support repeating events.
   - 8.3.2
   - 8.4.5
   - 8.5.0
-  - 8.6.0
+  - 8.6.0-8.6.5
+  - 8.7.0 (beta)
 - PHP
   - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0
 

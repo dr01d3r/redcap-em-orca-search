@@ -43,7 +43,6 @@ class OrcaSearch extends AbstractExternalModule {
                 }
             </script>
             <?php
-            echo "<link rel='stylesheet' type='text/css' href='" . $this->getUrl('css/orca_search.css') . "' />";
             echo "<script src='" . $this->getUrl('js/orca_search.js') . "'></script>";
         }
     }

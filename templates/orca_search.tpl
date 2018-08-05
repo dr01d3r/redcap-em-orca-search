@@ -1,21 +1,21 @@
 {* Smarty *}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css">
 <style>
-    #{$config["table_id"]} > thead > tr > th {
+    #orca_search_table > thead > tr > th {
         text-overflow: ellipsis;
     }
 
-    #{$config["table_id"]} > tbody > tr,
-    #{$config["table_id"]} > tbody > tr > td {
+    #orca_search_table > tbody > tr,
+    #orca_search_table > tbody > tr > td {
         position: relative;
         vertical-align: middle;
     }
 
-    #{$config["table_id"]} {
+    #orca_search_table {
         display: none;
     }
 
-    #{$config["table_id"]}_ph {
+    #orca_search_table_ph {
         font-size: 20px;
         font-style: italic;
         padding: 35px;
@@ -29,7 +29,7 @@
         padding: 0px 10px 10px 10px !important;
     }
 
-    #{$config["table_id"]} .jqbuttonmed {
+    #orca_search_table .jqbuttonmed {
         white-space: nowrap;
     }
 
@@ -44,7 +44,6 @@
 
     .alert {
         border: 1px solid transparent !important;
-        /*margin-bottom: 10px;*/
     }
     .alert-danger {
         border-color: #ebccd1 !important;
@@ -61,6 +60,7 @@
 
     .dataTables_wrapper ul {
         -webkit-padding-start: 20px;
+        margin-bottom: 0px;
     }
 </style>
 <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
@@ -184,11 +184,11 @@
         {/if}
     </div>
     <div>
-        <div id="{$config["table_id"]}_ph">
+        <div id="orca_search_table_ph">
             Loading data. Please wait...
         </div>
         <div class="table-responsive">
-            <table id="{$config["table_id"]}" class="table table-bordered table-condensed table-hover">
+            <table id="orca_search_table" class="table table-bordered table-condensed table-hover">
                 <thead>
                 <tr>
                     {foreach from=$config["display_fields"] key=col_name item=col_value}
@@ -256,11 +256,11 @@
                 $("#search-value").show();
             }
         }
-        var table = $("#{$config["table_id"]}").DataTable({
+        var table = $("#orca_search_table").DataTable({
             pageLength: 50,
             initComplete: function () {
-                $("#{$config["table_id"]}").css('width', '100%').show();
-                $("#{$config["table_id"]}_ph").hide();
+                $("#orca_search_table").css('width', '100%').show();
+                $("#orca_search_table_ph").hide();
             }
         });
 

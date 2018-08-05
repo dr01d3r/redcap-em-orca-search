@@ -11,7 +11,6 @@ $config = [
     "has_repeating_forms" => $Proj->hasRepeatingForms(),
     "instance_search" => $module->getProjectSetting("instance_search"),
     "show_instance_badge" => $module->getProjectSetting("show_instance_badge"),
-    "table_id" => "A" . uniqid(),
     "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
     "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],

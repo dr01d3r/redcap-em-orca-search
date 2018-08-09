@@ -102,6 +102,8 @@ trait REDCapUtils {
 		}
 
 		$fieldValuesToStrPosOrEquals = [];
+        $allFieldNamesInString = "";
+        $allFieldNamesNeeded = [];
 
 		foreach($fieldValues as $field => $value){
 			$fieldValuesToStrPosOrEquals[$field] = "equals";
@@ -111,12 +113,10 @@ trait REDCapUtils {
 			}
 		}
 
-		$allFieldNamesNeeded = [];
 		if(!empty($fieldValues)){
 			$allFieldNamesNeeded = array_merge($allFieldNamesNeeded, array_keys($fieldValues));
+            $allFieldNamesInString = " AND field_name IN('" . implode("', '", $allFieldNamesNeeded) . "')";
 		}
-
-		$allFieldNamesInString = " AND field_name IN('" . implode("', '", $allFieldNamesNeeded) . "')";
 
 		$primarySql = "SELECT record, field_name, value, instance FROM redcap_data WHERE project_id = " . $this->getPid() . $allFieldNamesInString;
 		$primaryResult = $this->_getREDCapConn()->query($primarySql);

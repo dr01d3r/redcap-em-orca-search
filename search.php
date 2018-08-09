@@ -94,6 +94,8 @@ if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
 }
 
 foreach ($module->getSubSettings("search_fields") as $search_field) {
+    if (empty($search_field["search_field_name"])) continue;
+
     if ($Proj->isFormStatus($search_field["search_field_name"])) {
         $config["search_fields"][$search_field["search_field_name"]] = [
             "wildcard" => false,
@@ -136,6 +138,8 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
 }
 
 foreach ($module->getSubSettings("display_fields") as $display_field) {
+    if (empty($display_field["display_field_name"])) continue;
+
     if ($Proj->isFormStatus($display_field["display_field_name"])) {
         $config["display_fields"][$display_field["display_field_name"]] = [
             "is_form_status" => true,
@@ -163,14 +167,23 @@ if ($config["auto_numbering"]) {
 
 $fieldValues = null;
 if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
+    $search_field = $_POST["search-field"];
     $search_value = $_POST["search-value"];
-    if ($config["search_fields"][$_POST["search-field"]]["wildcard"] === true) {
+    if ($config["search_fields"][$search_field]["wildcard"] === true) {
         $search_value = "$search_value%";
     }
-    $fieldValues[$_POST["search-field"]] = $search_value;
-}
+    $fieldValues[$search_field] = $search_value;
 
-if (!empty($fieldValues)) {
+    if (empty($config["instance_search"])) {
+        $config["instance_search"] = "LATEST";
+        if ($config["has_repeating_forms"]) {
+            $search_field_key = key($fieldValues);
+            // TODO this is set to only look at the first entry in the array, since the module doesn't yet support multiple search fields
+            if ($metadata["forms"][$metadata["fields"][$search_field_key]["form"]]["repeating"] === true) {
+                $config["warnings"][] = "<b>" . $config["search_fields"][$search_field_key]["value"] . "</b> is on a repeating instrument, and the config setting <b>Which instances to search through</b> has not been set.  Using a default value of <b>Latest</b>.";
+            }
+        }
+    }
     $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
     $recordCount = count($recordIds);
 }
@@ -183,8 +196,11 @@ if ($recordCount === 0) {
     $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
 }
 
-if (empty($config["search_fields"]) || empty($config["display_fields"])) {
-    $config["errors"][] = "This module has not yet been configured.  Please go to the <b>" . $lang["global_142"] . "</b> area in the project sidebar to configure it.";
+if (empty($config["search_fields"])) {
+    $config["errors"][] = "Search fields not yet been configured.  Please go to the <b>" . $lang["global_142"] . "</b> area in the project sidebar to configure them.";
+}
+if (empty($config["display_fields"])) {
+    $config["errors"][] = "Display fields not yet been configured.  Please go to the <b>" . $lang["global_142"] . "</b> area in the project sidebar to configure them.";
 }
 
 /*
@@ -300,6 +316,7 @@ foreach ($records as $record_id => $record) { // Record
 
 if (false) { // TODO this will be replaced with an 'enable debugging' setting
     $debug["config"] = $config;
+    $debug["metadata"] = $metadata;
     if ((isset($debug) && !empty($debug))) {
         $module->setTemplateVariable("debug", print_r($debug, true));
     }

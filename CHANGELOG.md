@@ -2,6 +2,9 @@
 - Added support for Bootstrap 4 in REDCap v8.7.0+
 - Adjusted the display of instance badges
   - They are now pushed over to the right, to not interfere with the content
+- Fixed an issue that would cause the module to error if a certain config setting was not set
+  - A default value is now used if instance_search is not specified or the field being searched is not on a repeating instrument.
+- Additional improvements to error handling
 - Miscellaneous fixes
 ## 1.2.3
 - Added a workaround for a issue in earlier versions of REDCap that would allow hook functions of the module to execute outside of project context

@@ -177,7 +177,7 @@
 </div>
 
 {if $debug}
-    <pre>{$debug}</pre>
+    <pre class="well">{$debug}</pre>
 {/if}
 
 <script type="text/javascript">

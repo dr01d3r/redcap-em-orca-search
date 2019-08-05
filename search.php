@@ -184,7 +184,7 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
             }
         }
     }
-    $recordIds = $module->getProjectRecordIds($fieldValues, "ALL", $config["instance_search"]);
+    $recordIds = $module->getProjectRecordIds($fieldValues, $config["instance_search"]);
     $recordCount = count($recordIds);
 }
 

@@ -30,6 +30,10 @@
     white-space: nowrap;
 }
 
+#orca_search_table .badge {
+    min-width: 2em;
+}
+
 .orca-search-content {
     font-weight: bold;
     color: blue;

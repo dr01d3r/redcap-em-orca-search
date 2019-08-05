@@ -31,12 +31,12 @@ class OrcaSearch extends AbstractExternalModule {
     public function redcap_every_page_top($project_id) {
         if (empty($project_id)) return;
         global $lang;
-        if ($this->getProjectSetting("replace_add_edit") === true) {
+        if ($this->getProjectSetting("replace_add_edit", $project_id) === true) {
             ?>
             <script type='text/javascript'>
                 if(typeof OrcaSearch === 'undefined') {
                     var OrcaSearch = {
-                        addEditLinkText: "<?=$lang['bottom_62']?>",
+                        addEditLinkText: [ "<?=$lang['bottom_62']?>", "<?=$lang['bottom_72']?>" ],
                         orcaSearchURL: "<?=$this->getUrl('search.php')?>",
                         moduleLinkType: "add_edit_replace"
                     };

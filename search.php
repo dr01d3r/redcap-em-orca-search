@@ -190,10 +190,18 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
             }
         }
     }
-    $recordIds = $module->getProjectRecordIds($searchConfig, $config["instance_search"]);
-    // NOTE: if getProjectRecordIds() returns false, count() will return a value of 1
-    // this is expected behavior so the next step will return all records
-    $recordCount = count($recordIds);
+    try {
+        $recordIds = $module->getProjectRecordIds($searchConfig, $config["instance_search"]);
+        // getProjectRecordIds() returns false if no search values are specified
+        // this will trigger a full data pull in the next step, so just grab the total record count in the project
+        if ($recordIds === false) {
+            $recordCount = \Records::getRecordCount($module->getPID());
+        } else {
+            $recordCount = count($recordIds);
+        }
+    } catch (Exception $ex) {
+        $config["errors"][] = $ex->getMessage();
+    }
 }
 
 if ($recordCount === 0) {

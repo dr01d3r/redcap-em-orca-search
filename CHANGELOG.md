@@ -1,9 +1,17 @@
+## 2.0.1 (`2019-08-06`)
+- Fixed a bug where searching '0' values would not return the proper results
+  - This was primarily an issue with yesno and form status fields
+- Fixed a bug where the "Add/Edit" override did not work properly for users that did not have "Create Record" rights
+- Fixed a bug where instance badges were not displaying properly
+- Added default options to search fields that used a dropdown.
+  - Previously, if your search options were exclusively structured fields, you would not have the ability to do a 'blank' search to return all records
+- Additional code cleanup and refactoring
 ## 2.0.0
 - Added support for Bootstrap 4 in REDCap v8.7.0+
 - Adjusted the display of instance badges
   - They are now pushed over to the right, to not interfere with the content
 - Fixed an issue that would cause the module to error if a certain config setting was not set
-  - A default value is now used if instance_search is not specified or the field being searched is not on a repeating instrument.
+  - A default value is now used if instance_search is not specified or the field being searched is not on a repeating instrument
 - Additional improvements to error handling
 - Miscellaneous fixes
 ## 1.2.3

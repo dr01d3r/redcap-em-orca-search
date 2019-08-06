@@ -32,7 +32,7 @@
                     <label for="search-field">Select Search Field</label><br/>
                     <select name="search-field" id="search-field" class="form-control">
                         {foreach from=$config["search_fields"] key=field_name item=field_data}
-                            {if $field_name == $search_info["search-field"]}
+                            {if $field_name === $search_info["search-field"]}
                                 <option selected="true" value="{$field_name}">{$field_data["value"]}</option>
                             {else}
                                 <option value="{$field_name}">{$field_data["value"]}</option>
@@ -71,7 +71,7 @@
                             <select class="form-control orca-search-field-select" id="{$field_name}">
                                 <option value="">--</option>
                                 {foreach from=$field_data["dictionary_values"] key=dd_key item=dd_value}
-                                    {if $field_name == $search_info["search-field"] && $search_info["search-value"] == $dd_key}
+                                    {if $field_name === $search_info["search-field"] && $search_info["search-value"] === "$dd_key"}
                                         <option selected="true" value="{$dd_key}">{$dd_value}</option>
                                     {else}
                                         <option value="{$dd_key}">{$dd_value}</option>

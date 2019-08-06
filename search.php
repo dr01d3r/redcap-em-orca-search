@@ -59,6 +59,7 @@ $results = [];
 
 $recordIds = null;
 $recordCount = null;
+$searchConfig = null;
 
 /*
  * Build the Form/Field Metadata
@@ -165,26 +166,33 @@ if ($config["auto_numbering"]) {
     $config["new_record_auto_id"] = getAutoId();
 }
 
-$fieldValues = null;
 if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
     $search_field = $_POST["search-field"];
     $search_value = $_POST["search-value"];
+
+    $searchConfig[$search_field] = [
+        "value" => $search_value
+    ];
+
     if ($config["search_fields"][$search_field]["wildcard"] === true) {
-        $search_value = "$search_value%";
+        $searchConfig[$search_field]["mode"] = "strpos";
+    } else {
+        $searchConfig[$search_field]["mode"] = "equals";
     }
-    $fieldValues[$search_field] = $search_value;
 
     if (empty($config["instance_search"])) {
         $config["instance_search"] = "LATEST";
         if ($config["has_repeating_forms"]) {
-            $search_field_key = key($fieldValues);
             // TODO this is set to only look at the first entry in the array, since the module doesn't yet support multiple search fields
+            $search_field_key = key($searchConfig);
             if ($metadata["forms"][$metadata["fields"][$search_field_key]["form"]]["repeating"] === true) {
                 $config["warnings"][] = "<b>" . $config["search_fields"][$search_field_key]["value"] . "</b> is on a repeating instrument, and the config setting <b>Which instances to search through</b> has not been set.  Using a default value of <b>Latest</b>.";
             }
         }
     }
-    $recordIds = $module->getProjectRecordIds($fieldValues, $config["instance_search"]);
+    $recordIds = $module->getProjectRecordIds($searchConfig, $config["instance_search"]);
+    // NOTE: if getProjectRecordIds() returns false, count() will return a value of 1
+    // this is expected behavior so the next step will return all records
     $recordCount = count($recordIds);
 }
 

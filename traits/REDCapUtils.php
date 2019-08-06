@@ -125,33 +125,38 @@ trait REDCapUtils {
      *
      * "record_ids" will contain the record_ids for the given parameters
      *
-     * @param  array $searchValues - An array of field_name to values; if they match (see $instanceToMatch), the record is returned
+     * @param  array $searchConfig - An array of field_name to values; if they match (see $instanceToMatch), the record is returned
      * @param  string $instanceToMatch - "LATEST" to check fields against just the latest instance, or "ALL" to check against all instances
      *
-     * @return array - An array of record ids, or [{associated information elements}, "records_ids" => [1,2,3]] if requested
+     * @return array|false - An array of record ids, or [{associated information elements}, "records_ids" => [1,2,3]] if requested, or false if no search criteria was provided
      *
      * @throws Exception
      */
-    public function getProjectRecordIds($searchValues = null, $instanceToMatch = "LATEST") {
+    public function getProjectRecordIds($searchConfig, $instanceToMatch = "LATEST") {
         $validInstanceToMatchTypes = [ "LATEST", "ALL" ];
 
+        if ($searchConfig === null) {
+            return false;
+        }
+        $searchConfig = array_filter($searchConfig, function($v) {
+           return $v["value"] !== null && $v["value"] !== '';
+        });
+        if (empty($searchConfig)) {
+            return false;
+        }
         if (!in_array($instanceToMatch, $validInstanceToMatchTypes)) {
             throw new Exception(sprintf("PARAMETER_OF_TYPE_INVALID", "\$instanceToMatch", $instanceToMatch));
         }
 
         $project_id = $this->getPID();
-        $fieldSearchTypes = [];
+        $sqlFieldNameInclusion = "";
 
-        foreach ($searchValues as $field => $value) {
-            $fieldSearchTypes[$field] = "equals";
-            if (strpos($value, "%") !== false) {
-                $fieldSearchTypes[$field] = "strpos";
-                $searchValues[$field] = $this->_getREDCapConn()->real_escape_string(rtrim($value, "%"));
-            }
+        foreach ($searchConfig as $field => $fieldInfo) {
+            $searchConfig[$field]["value"] = $this->_getREDCapConn()->real_escape_string($fieldInfo["value"]);
         }
 
-        if (!empty($searchValues)) {
-            $sqlFieldNameInclusion = "AND field_name IN ( '" . implode("', '", array_keys($searchValues)) . "' )";
+        if (!empty($searchConfig)) {
+            $sqlFieldNameInclusion = "AND field_name IN ( '" . implode("', '", array_keys($searchConfig)) . "' )";
         }
 
         $primarySql = "
@@ -183,11 +188,11 @@ ORDER BY record, event_id DESC, instance DESC
         $filteredRecords = [];
         foreach ($allRecords as $recordId => $record) {
             // initialize the search results to false
-            $matchResults = array_fill_keys(array_keys($searchValues), false);
+            $matchResults = array_fill_keys(array_keys($searchConfig), false);
 
-            foreach ($searchValues as $searchField => $searchValue) {
+            foreach ($searchConfig as $searchField => $searchFieldInfo) {
                 // consider it a match if the search value is 'empty'
-                if ($searchValue === '' || $searchValue === null) {
+                if ($searchFieldInfo["value"] === '' || $searchFieldInfo["value"] === null) {
                     $matchResults[$searchField]["match"] = true;
                     // TODO move out of the loop when multiple search field support is added
                     $filteredRecords[$recordId] = true;
@@ -207,9 +212,8 @@ ORDER BY record, event_id DESC, instance DESC
                     // ignore empty/missing values
                     if ($search["value"] === '' || $search["value"] === null) continue;
 
-                    // wildcard and exact match
-                    if ($fieldSearchTypes[$searchField] === "strpos") {
-                        if (stripos($search["value"], $searchValue) !== false) {
+                    if ($searchFieldInfo["mode"] === "strpos") {
+                        if (stripos($search["value"], $searchFieldInfo["value"]) !== false) {
 //                            $this->preout("WILDCARD MATCH $instanceToMatch -> record: $recordId | event: {$search["event_id"]} | instance: {$search["instance"]} | field: $searchField | value: {$search["value"]}");
                             $matchResults[$searchField]["match"] = true;
                             // TODO move out of the loop when multiple search field support is added
@@ -217,7 +221,7 @@ ORDER BY record, event_id DESC, instance DESC
                             break;
                         }
                     } else {
-                        if (strcasecmp($search["value"], $searchValue) === 0) {
+                        if (strcasecmp($search["value"], $searchFieldInfo["value"]) === 0) {
 //                            $this->preout("EXACT MATCH $instanceToMatch -> record: $recordId | event: {$search["event_id"]} | instance: {$search["instance"]} | field: $searchField | value: {$search["value"]}");
                             $matchResults[$searchField]["match"] = true;
                             // TODO move out of the loop when multiple search field support is added

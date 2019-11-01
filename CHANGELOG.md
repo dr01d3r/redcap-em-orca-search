@@ -1,3 +1,5 @@
+## 2.0.2 (`2019-11-1`)
+- Fixed a bug where trying to search would instead send you to the first 'Advanced' Custom Application Link
 ## 2.0.1 (`2019-08-06`)
 - Fixed a bug where searching '0' values would not return the proper results
   - This was primarily an issue with yesno and form status fields

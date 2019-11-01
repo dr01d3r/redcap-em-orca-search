@@ -24,14 +24,10 @@ This module does not yet support repeating events.
 ## Testing & Validation
 
 - REDCap
-  - 8.2.2
-  - 8.3.2
-  - 8.4.5
-  - 8.5.0
-  - 8.6.0-8.6.5
-  - 8.7.0 (beta)
+  - Minimum: 8.2.2
+  - Maximum: 9.3.4
 - PHP
-  - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0
+  - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0, up to PHP v7.1
 
 ## Permissions
 

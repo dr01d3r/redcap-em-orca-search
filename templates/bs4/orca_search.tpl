@@ -26,7 +26,7 @@
 <div class="card">
     <!-- Default panel contents -->
     <div class="card-header">
-        <form method="post" action="">
+        <form id="orca_search_form" method="post" action="">
             <div class="row">
                 <div class="form-group col-lg">
                     <label for="search-field">Select Search Field</label><br/>
@@ -249,11 +249,11 @@
         });
 
         $("body").on("click", "#orca-search", function() {
-            document.forms[0].submit();
+            $("form#orca_search_form").submit();
         });
         $("body").on("keypress", "#search-value", function(e) {
             if (e.which == 13) {
-                document.forms[0].submit();
+                $("form#orca_search_form").submit();
             }
         });
 

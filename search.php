@@ -170,27 +170,32 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
     $search_field = $_POST["search-field"];
     $search_value = $_POST["search-value"];
 
-    $searchConfig[$search_field] = [
-        "value" => $search_value
-    ];
+    try {
+        if ($module->getProjectSetting("empty_search_disabled") === true && $search_value == "") {
+            throw new Exception("Empty search has been disabled.  Please provide a value and try again.");
+        }
 
-    if ($config["search_fields"][$search_field]["wildcard"] === true) {
-        $searchConfig[$search_field]["mode"] = "strpos";
-    } else {
-        $searchConfig[$search_field]["mode"] = "equals";
-    }
+        $searchConfig[$search_field] = [
+            "value" => $search_value
+        ];
 
-    if (empty($config["instance_search"])) {
-        $config["instance_search"] = "LATEST";
-        if ($config["has_repeating_forms"]) {
-            // TODO this is set to only look at the first entry in the array, since the module doesn't yet support multiple search fields
-            $search_field_key = key($searchConfig);
-            if ($metadata["forms"][$metadata["fields"][$search_field_key]["form"]]["repeating"] === true) {
-                $config["warnings"][] = "<b>" . $config["search_fields"][$search_field_key]["value"] . "</b> is on a repeating instrument, and the config setting <b>Which instances to search through</b> has not been set.  Using a default value of <b>Latest</b>.";
+        if ($config["search_fields"][$search_field]["wildcard"] === true) {
+            $searchConfig[$search_field]["mode"] = "strpos";
+        } else {
+            $searchConfig[$search_field]["mode"] = "equals";
+        }
+
+        if (empty($config["instance_search"])) {
+            $config["instance_search"] = "LATEST";
+            if ($config["has_repeating_forms"]) {
+                // TODO this is set to only look at the first entry in the array, since the module doesn't yet support multiple search fields
+                $search_field_key = key($searchConfig);
+                if ($metadata["forms"][$metadata["fields"][$search_field_key]["form"]]["repeating"] === true) {
+                    $config["warnings"][] = "<b>" . $config["search_fields"][$search_field_key]["value"] . "</b> is on a repeating instrument, and the config setting <b>Which instances to search through</b> has not been set.  Using a default value of <b>Latest</b>.";
+                }
             }
         }
-    }
-    try {
+
         $recordIds = $module->getProjectRecordIds($searchConfig, $config["instance_search"]);
         // getProjectRecordIds() returns false if no search values are specified
         // this will trigger a full data pull in the next step, so just grab the total record count in the project

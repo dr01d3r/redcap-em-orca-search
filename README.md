@@ -25,7 +25,7 @@ This module does not yet support repeating events.
 
 - REDCap
   - Minimum: 8.2.2
-  - Maximum: 9.3.4
+  - Latest: 9.3.4
 - PHP
   - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0, up to PHP v7.1
 
@@ -56,6 +56,8 @@ This module does not yet support repeating events.
 - **Include DAG in results**
   - An additional column will display in the results, indicating the Data Access Group that record belongs to.
   - This option only works if the project uses Data Access Groups.
+- **Prevent an empty search from yielding results**
+  - Forces users to always provide a value when searching.  This can be useful when you want to restrict access to records (i.e. MRN exact match).
 - **Search Fields**
   - This repeating configuration allows you to select the fields that you want to use as search fields.
   - Fields will display in the dropdown, in the order that exist in the config.

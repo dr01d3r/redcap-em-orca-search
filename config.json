@@ -96,6 +96,12 @@
       "type": "checkbox"
     },
     {
+      "key": "empty_search_disabled",
+      "name": "Prevent an empty search from yielding results",
+      "required": false,
+      "type": "checkbox"
+    },
+    {
       "key": "search_fields",
       "name": "Searchable Fields",
       "required": true,

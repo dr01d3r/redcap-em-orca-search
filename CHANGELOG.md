@@ -1,3 +1,5 @@
+## 2.1.0 (`2019-11-18`)
+- Added a project configuration option to disable empty searches
 ## 2.0.2 (`2019-11-1`)
 - Fixed a bug where trying to search would instead send you to the first 'Advanced' Custom Application Link
 ## 2.0.1 (`2019-08-06`)

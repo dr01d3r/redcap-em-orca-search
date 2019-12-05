@@ -1,3 +1,5 @@
+## 2.2.0 (`2019-12-5`)
+- Support for Dynamic SQL fields has been improved
 ## 2.1.0 (`2019-11-18`)
 - Added a project configuration option to disable empty searches
 ## 2.0.2 (`2019-11-1`)

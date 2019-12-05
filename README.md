@@ -64,7 +64,7 @@ This module does not yet support repeating events.
   - Fields that are select, radio, form status, etc., will display a dropdown instead of a text box, for filtering by value.
   - **Return Partial Matches**
     - This option allows you to do a 'wildcard' search on that field (i.e. searching **wis** in a state search will return results for **Wis**consin)
-    - **NOTE:** This option is ignored if the field type is **radio**, **select**, or **checkbox**
+    - **NOTE:** This option is ignored if the field type is **radio**, **select**, **checkbox**, or **sql**
 - **Display Fields**
   - These are the fields you wish to see in the results table
   - Text values will display as-is, while structured data will show the display values.
@@ -83,6 +83,7 @@ This module does not yet support repeating events.
 - If a project uses Data Access Groups, and the record_id field is displayed, I've done my best to ensure that column sorts as expected.
 - For projects with significant record counts (10,000+, especially if they use DAGs), the usage of getAutoId() for adding new records will increase the load times of the module.
   - For a baseline example, a project with ~45k records takes 4-8 seconds for getAutoId() to complete.
+  - **Note:** performance for this should see significant improvement in **REDCap v9.3.7+**
 - If you identify any issues, please submit an issue on this GitHub repo or make a post on the forums and tag me (@chris.kadolph)
 
 ## Future Support

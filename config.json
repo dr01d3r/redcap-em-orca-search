@@ -117,7 +117,7 @@
         },
         {
           "key": "search_field_name_wildcard",
-          "name": "Return Partial Matches?<br/><small><b>NOTE:</b> This setting is ignored for field types of <kbd>select</kbd>, <kbd>radio</kbd>, and <kbd>checkbox</kbd></small>",
+          "name": "Return Partial Matches?<br/><small><b>NOTE:</b> This setting is ignored for field types of <kbd>select</kbd>, <kbd>radio</kbd>, <kbd>checkbox</kbd>, and <kbd>sql</kbd></small>",
           "required": true,
           "type": "checkbox",
           "repeatable": false

@@ -1,5 +1,5 @@
 $(function() {
-    if (OrcaSearch) {
+    if(typeof OrcaSearch !== 'undefined') {
         let $addEditLink = $("#west a:contains(" + OrcaSearch.addEditLinkText[0] + ")");
         if ($addEditLink.length === 0) {
             $addEditLink = $("#west a:contains(" + OrcaSearch.addEditLinkText[1] + ")");
@@ -15,6 +15,7 @@ $(function() {
     }
     $('.orca-tooltip').popover({
         container: 'body',
+        html: true,
         trigger: 'hover'
     });
 });

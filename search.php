@@ -111,6 +111,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
         switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
             case "select":
             case "radio":
+            case "sql":
                 $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = false;
                 break;
             case "checkbox":
@@ -132,6 +133,16 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
             case "truefalse":
                 $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
                     $metadata["custom_dictionary_values"][$Proj->metadata[$search_field["search_field_name"]]["element_type"]];
+                break;
+            case "sql":
+                // add 'dd' to custom_dictionary_values if not already there
+                if (!isset($metadata["custom_dictionary_values"][$search_field["search_field_name"]])) {
+                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$search_field["search_field_name"]]['element_enum']));
+                    $metadata["custom_dictionary_values"][$search_field["search_field_name"]] = $sql_enum;
+                }
+                // set dictionary values for this sql field
+                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
+                    $metadata["custom_dictionary_values"][$search_field["search_field_name"]];
                 break;
             default: break;
         }
@@ -304,6 +315,14 @@ foreach ($records as $record_id => $record) { // Record
                 case "yesno":
                 case "truefalse":
                     $field_value = $metadata["custom_dictionary_values"][$Proj->metadata[$field_name]["element_type"]][$field_value];
+                    break;
+                case "sql":
+                    if (isset($metadata["custom_dictionary_values"][$field_name][$field_value])) {
+                        $field_value = $metadata["custom_dictionary_values"][$field_name][$field_value];
+                    } else if ($field_value !== null && $field_value != '') {
+                        // we don't want to show the raw value if a match is not found
+                        $field_value = "";
+                    }
                     break;
                 default: break;
             }

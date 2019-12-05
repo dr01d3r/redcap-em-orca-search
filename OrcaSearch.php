@@ -43,8 +43,8 @@ class OrcaSearch extends AbstractExternalModule {
                 }
             </script>
             <?php
-            echo "<script src='" . $this->getUrl('js/orca_search.js') . "'></script>";
         }
+        echo "<script src='" . $this->getUrl('js/orca_search.js') . "'></script>";
     }
 
     public function initializeSmarty() {

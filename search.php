@@ -96,53 +96,54 @@ if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
 
 foreach ($module->getSubSettings("search_fields") as $search_field) {
     if (empty($search_field["search_field_name"])) continue;
-
-    if ($Proj->isFormStatus($search_field["search_field_name"])) {
-        $config["search_fields"][$search_field["search_field_name"]] = [
+    $field_name = $search_field["search_field_name"];
+    
+    if ($Proj->isFormStatus($field_name)) {
+        $config["search_fields"][$field_name] = [
             "wildcard" => false,
-            "value" => $Proj->forms[$Proj->metadata[$search_field["search_field_name"]]["form_name"]]["menu"] . " Status",
+            "value" => $Proj->forms[$Proj->metadata[$field_name]["form_name"]]["menu"] . " Status",
             "dictionary_values" => $metadata["form_statuses"]
         ];
     } else {
-        $config["search_fields"][$search_field["search_field_name"]] = [
-            "value" => $module->getDictionaryLabelFor($search_field["search_field_name"])
+        $config["search_fields"][$field_name] = [
+            "value" => $module->getDictionaryLabelFor($field_name)
         ];
         // override wildcard config in certain cases; otherwise, take what the user specified
-        switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
+        switch ($Proj->metadata[$field_name]["element_type"]) {
             case "select":
             case "radio":
             case "sql":
-                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = false;
+                $config["search_fields"][$field_name]["wildcard"] = false;
                 break;
             case "checkbox":
-                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = true;
+                $config["search_fields"][$field_name]["wildcard"] = true;
                 break;
             default:
-                $config["search_fields"][$search_field["search_field_name"]]["wildcard"] = $search_field["search_field_name_wildcard"];
+                $config["search_fields"][$field_name]["wildcard"] = $search_field["search_field_name_wildcard"];
                 break;
         }
         // set structured values for display in search options
-        switch ($Proj->metadata[$search_field["search_field_name"]]["element_type"]) {
+        switch ($Proj->metadata[$field_name]["element_type"]) {
             case "select":
             case "radio":
             case "checkbox":
-                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
-                    $module->getDictionaryValuesFor($search_field["search_field_name"]);
+                $config["search_fields"][$field_name]["dictionary_values"] =
+                    $module->getDictionaryValuesFor($field_name);
                 break;
             case "yesno":
             case "truefalse":
-                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
-                    $metadata["custom_dictionary_values"][$Proj->metadata[$search_field["search_field_name"]]["element_type"]];
+                $config["search_fields"][$field_name]["dictionary_values"] =
+                    $metadata["custom_dictionary_values"][$Proj->metadata[$field_name]["element_type"]];
                 break;
             case "sql":
                 // add 'dd' to custom_dictionary_values if not already there
-                if (!isset($metadata["custom_dictionary_values"][$search_field["search_field_name"]])) {
-                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$search_field["search_field_name"]]['element_enum']));
-                    $metadata["custom_dictionary_values"][$search_field["search_field_name"]] = $sql_enum;
+                if (!isset($metadata["custom_dictionary_values"][$field_name])) {
+                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$field_name]['element_enum']));
+                    $metadata["custom_dictionary_values"][$field_name] = $sql_enum;
                 }
                 // set dictionary values for this sql field
-                $config["search_fields"][$search_field["search_field_name"]]["dictionary_values"] =
-                    $metadata["custom_dictionary_values"][$search_field["search_field_name"]];
+                $config["search_fields"][$field_name]["dictionary_values"] =
+                    $metadata["custom_dictionary_values"][$field_name];
                 break;
             default: break;
         }
@@ -151,22 +152,23 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
 
 foreach ($module->getSubSettings("display_fields") as $display_field) {
     if (empty($display_field["display_field_name"])) continue;
+    $field_name = $display_field["display_field_name"];
 
-    if ($Proj->isFormStatus($display_field["display_field_name"])) {
-        $config["display_fields"][$display_field["display_field_name"]] = [
+    if ($Proj->isFormStatus($field_name)) {
+        $config["display_fields"][$field_name] = [
             "is_form_status" => true,
-            "label" => $Proj->forms[$Proj->metadata[$display_field["display_field_name"]]["form_name"]]["menu"] . " Status"
+            "label" => $Proj->forms[$Proj->metadata[$field_name]["form_name"]]["menu"] . " Status"
         ];
     } else {
-        $config["display_fields"][$display_field["display_field_name"]] = [
-            "label" => $module->getDictionaryLabelFor($display_field["display_field_name"])
+        $config["display_fields"][$field_name] = [
+            "label" => $module->getDictionaryLabelFor($field_name)
         ];
-        switch ($Proj->metadata[$display_field["display_field_name"]]["element_type"]) {
+        switch ($Proj->metadata[$field_name]["element_type"]) {
             case "sql":
                 // add 'dd' to custom_dictionary_values if not already there
-                if (!isset($metadata["custom_dictionary_values"][$display_field["display_field_name"]])) {
-                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$display_field["display_field_name"]]['element_enum']));
-                    $metadata["custom_dictionary_values"][$display_field["display_field_name"]] = $sql_enum;
+                if (!isset($metadata["custom_dictionary_values"][$field_name])) {
+                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$field_name]['element_enum']));
+                    $metadata["custom_dictionary_values"][$field_name] = $sql_enum;
                 }
                 break;
             default: break;

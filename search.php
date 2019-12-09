@@ -161,6 +161,16 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
         $config["display_fields"][$display_field["display_field_name"]] = [
             "label" => $module->getDictionaryLabelFor($display_field["display_field_name"])
         ];
+        switch ($Proj->metadata[$display_field["display_field_name"]]["element_type"]) {
+            case "sql":
+                // add 'dd' to custom_dictionary_values if not already there
+                if (!isset($metadata["custom_dictionary_values"][$display_field["display_field_name"]])) {
+                    $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$display_field["display_field_name"]]['element_enum']));
+                    $metadata["custom_dictionary_values"][$display_field["display_field_name"]] = $sql_enum;
+                }
+                break;
+            default: break;
+        }
     }
 }
 

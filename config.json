@@ -137,6 +137,41 @@
           "required": true,
           "type": "field-list",
           "repeatable": false
+        },
+        {
+          "key": "display_field_sort_on_field",
+          "name": "Check if you wish to sort the table on this field.",
+          "required": false,
+          "type": "checkbox",
+          "repeatable": false
+        },
+        {
+          "key": "display_field_sort_direction",
+          "name": "Sort Direction",
+          "required": false,
+          "type": "dropdown",
+          "repeatable": false,
+          "choices": [
+            {
+              "value": "NONE",
+              "name": "None"
+            },
+            {
+              "value": "asc",
+              "name": "Ascending"
+            },
+            {
+              "value": "desc",
+              "name": "Descending"
+            }
+          ]
+        },
+        {
+          "key": "display_field_sort_priority",
+          "name": "The order this sorted field should be applied in. (a number between 1 and the number of columns in the table)",
+          "required": false,
+          "type": "text",
+          "repeatable": false
         }
       ]
     }

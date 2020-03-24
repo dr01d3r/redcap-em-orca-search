@@ -1,3 +1,5 @@
+## 2.3.0 (`2020-03-24`)
+- Display field sorting
 ## 2.2.0 (`2019-12-5`)
 - Support for Dynamic SQL fields has been improved
 ## 2.1.0 (`2019-11-18`)

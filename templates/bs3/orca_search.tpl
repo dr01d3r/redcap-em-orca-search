@@ -202,6 +202,7 @@
         }
         var table = $("#orca_search_table").DataTable({
             pageLength: 50,
+            order: {$orca_search_field_sorting},
             initComplete: function () {
                 $("#orca_search_table").css('width', '100%').show();
                 $("#orca_search_table_ph").hide();

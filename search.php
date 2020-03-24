@@ -150,6 +150,9 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
     }
 }
 
+//used to keep track of the zero-based index of each column (because the table displays columns from $config["display_fields"] in the order they appear in here)
+$fieldIndex = 0;
+$fieldSortingInfo = [];
 foreach ($module->getSubSettings("display_fields") as $display_field) {
     if (empty($display_field["display_field_name"])) continue;
     $field_name = $display_field["display_field_name"];
@@ -174,7 +177,36 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
             default: break;
         }
     }
+
+    //skip sorting if any of the fields for sorting are empty, to ensure everything is filled out
+    $sortOnField = $display_field['display_field_sort_on_field'] === true;
+    $emptySortFields = empty($display_field['display_field_sort_direction']) || empty($display_field['display_field_sort_priority']);
+    //report incorrect configuration of sorting
+    if($sortOnField && $emptySortFields) {
+        $config["errors"][] = "Incomplete sort configuration for \"{$field_name}\". Either deselect it for sorting or fill in missing values.";
+    }
+
+    //if no fields are empty (the priority has to be 1 or greater) AND sort direction isn't set to "NONE", then we can include this field in sorting
+    if($sortOnField && !$emptySortFields && (!$display_field['display_field_sort_direction'] !== "NONE")) {
+        //this field should be added to the sorting list
+        $fieldSortingInfo[] = ["field_index" => $fieldIndex, "direction" => $display_field['display_field_sort_direction'], "priority" => $display_field['display_field_sort_priority']];
+    }
+
+    //increment this after all logic dealing with the field
+    $fieldIndex++;
 }
+
+//sort the array, by reference, according to priority (lower priorities first, as people order things starting at 1)
+usort($fieldSortingInfo, function($a, $b) {
+    if($a['priority'] == $b['priority']) {
+        return 0;
+    }
+    return $a['priority'] < $b['priority'] ? -1 : 1;
+});
+//convert array for DataTables format: [columnIndex, asc/desc]
+$fieldSortingInfo = array_map(function($fieldInfo){
+    return [$fieldInfo['field_index'], $fieldInfo['direction']];
+}, $fieldSortingInfo);
 
 if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj->getGroups()) > 0) {
     $config["include_dag"] = true;
@@ -381,6 +413,8 @@ if (!empty($_POST)) {
 }
 
 $module->setTemplateVariable("data", $results);
+//A variable used to inject into DataTables to set the default sorting for the table based on configured fields
+$module->setTemplateVariable("orca_search_field_sorting", json_encode($fieldSortingInfo));
 
 echo "<link rel='stylesheet' type='text/css' href='" . $module->getUrl('css/orca_search.css') . "' />";
 

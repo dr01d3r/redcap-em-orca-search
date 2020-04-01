@@ -220,7 +220,7 @@
 
         $("body").on("click", "#orca-search-new-record", function() {
             {if $config["auto_numbering"]}
-            window.location.href = '{$config["new_record_url"]}' + '&id=' + '{$config["new_record_auto_id"]}' + addGoogTrans();
+            window.location.href = '{$config["new_record_url"]}' + '&id=' + '{$config["new_record_auto_id"]}';
             {else}
             var refocus = false;
             var idval = trim($('#orca-search-new-record-id').val());
@@ -244,7 +244,7 @@
                     $('#orca-search-new-record-id').focus();
                     return false;
                 }
-                window.location.href = '{$config["new_record_url"]}' + '&id=' + idval + addGoogTrans();
+                window.location.href = '{$config["new_record_url"]}' + '&id=' + idval;
             }
             {/if}
         });

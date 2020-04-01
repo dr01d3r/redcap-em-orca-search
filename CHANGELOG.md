@@ -1,3 +1,6 @@
+## 2.3.1 (`2020-04-01`)
+- Removed usage of a javascript function that was removed in REDCap v9.8.0
+  - This function was only a placeholder so no functional differences have occurred with this change.
 ## 2.3.0 (`2020-03-24`)
 - Display field sorting
 ## 2.2.0 (`2019-12-5`)

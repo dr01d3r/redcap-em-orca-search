@@ -1,7 +1,6 @@
 <?php
 /** @var \ORCA\OrcaSearch\OrcaSearch $module */
 require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
-require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
 
 $module->initializeSmarty();
 $module->addTime();
@@ -97,7 +96,7 @@ if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
 foreach ($module->getSubSettings("search_fields") as $search_field) {
     if (empty($search_field["search_field_name"])) continue;
     $field_name = $search_field["search_field_name"];
-    
+
     if ($Proj->isFormStatus($field_name)) {
         $config["search_fields"][$field_name] = [
             "wildcard" => false,
@@ -106,7 +105,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
         ];
     } else {
         $config["search_fields"][$field_name] = [
-            "value" => $module->getDictionaryLabelFor($field_name)
+            "value" => $module->truncate($module->getDictionaryLabelFor($field_name))
         ];
         // override wildcard config in certain cases; otherwise, take what the user specified
         switch ($Proj->metadata[$field_name]["element_type"]) {
@@ -128,7 +127,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
             case "radio":
             case "checkbox":
                 $config["search_fields"][$field_name]["dictionary_values"] =
-                    $module->getDictionaryValuesFor($field_name);
+                    $module->truncate($module->getDictionaryValuesFor($field_name));
                 break;
             case "yesno":
             case "truefalse":
@@ -143,7 +142,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
                 }
                 // set dictionary values for this sql field
                 $config["search_fields"][$field_name]["dictionary_values"] =
-                    $metadata["custom_dictionary_values"][$field_name];
+                    $module->truncate($metadata["custom_dictionary_values"][$field_name]);
                 break;
             default: break;
         }
@@ -160,11 +159,11 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
     if ($Proj->isFormStatus($field_name)) {
         $config["display_fields"][$field_name] = [
             "is_form_status" => true,
-            "label" => $Proj->forms[$Proj->metadata[$field_name]["form_name"]]["menu"] . " Status"
+            "label" => $module->truncate($Proj->forms[$Proj->metadata[$field_name]["form_name"]]["menu"] . " Status")
         ];
     } else {
         $config["display_fields"][$field_name] = [
-            "label" => $module->getDictionaryLabelFor($field_name)
+            "label" => $module->truncate($module->getDictionaryLabelFor($field_name))
         ];
         switch ($Proj->metadata[$field_name]["element_type"]) {
             case "sql":
@@ -217,8 +216,7 @@ if ($module->getProjectSetting("include_dag_if_exists") === true && count($Proj-
 }
 
 if ($config["auto_numbering"]) {
-    // TODO this takes a long time and makes the module load slowly
-    $config["new_record_auto_id"] = getAutoId();
+    $config["new_record_auto_id"] = $module->getAutoId();
 }
 
 if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
@@ -400,7 +398,7 @@ foreach ($records as $record_id => $record) { // Record
 
 if (false) { // TODO this will be replaced with an 'enable debugging' setting
     $debug["config"] = $config;
-    $debug["metadata"] = $metadata;
+//    $debug["metadata"] = $metadata;
     if ((isset($debug) && !empty($debug))) {
         $module->setTemplateVariable("debug", print_r($debug, true));
     }

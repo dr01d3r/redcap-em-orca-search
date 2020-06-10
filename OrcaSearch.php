@@ -22,6 +22,7 @@ class OrcaSearch extends AbstractExternalModule {
     {
         parent::__construct();
         define("MODULE_DOCROOT", $this->getModulePath());
+        define("MODULE_STRING_DISPLAY_LIMIT", 60);
     }
 
     public function redcap_module_link_check_display($project_id, $link) {

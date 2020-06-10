@@ -1,3 +1,8 @@
+## 2.3.2 (`2020-06-09`)
+- Updated use of `getAutoId` based on the version of REDCap
+  - From `v9.8.0` this function was moved to the `DataEntry` class
+- Field Labels and Search Options will now be truncated if they exceed 60 characters
+  - This is to avoid visual issues with dropdowns and table column headers
 ## 2.3.1 (`2020-04-01`)
 - Removed usage of a javascript function that was removed in REDCap v9.8.0
   - This function was only a placeholder so no functional differences have occurred with this change.

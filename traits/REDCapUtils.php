@@ -21,7 +21,6 @@ trait REDCapUtils {
         return self::$_REDCapConn;
     }
 
-
     /**
      * Pulled from AbstractExternalModule
      * For broad REDCap version compatibility
@@ -35,6 +34,15 @@ trait REDCapUtils {
             return $pid;
         } else {
             return null;
+        }
+    }
+
+    public function getAutoId() {
+        if (version_compare(REDCAP_VERSION, "9.8.0", ">=")) {
+            return \DataEntry::getAutoId();
+        } else {
+            require_once APP_PATH_DOCROOT . 'ProjectGeneral/form_renderer_functions.php';
+            return getAutoId();
         }
     }
 
@@ -278,6 +286,25 @@ ORDER BY record, event_id DESC, instance DESC
                 break;
         }
         return $php_date_format;
+    }
+
+    /**
+     * Truncate text to a specified limit.  The ellipsis '...' length is factored into the limit.
+     * @param $value mixed can be string or array. If array, all values will be truncated if needed
+     * @param $limit int the total maximum length for the text
+     * @return mixed the value after truncation
+     */
+    public function truncate($value, $limit = MODULE_STRING_DISPLAY_LIMIT) {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $value[$k] = $this->truncate($v);
+            }
+        } else {
+            if (strlen($value) > ($limit - 3)) {
+                $value = substr($value, 0, ($limit - 3)) . "...";
+            }
+        }
+        return $value;
     }
 
     public function preout($content) {

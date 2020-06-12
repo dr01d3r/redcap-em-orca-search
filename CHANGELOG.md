@@ -1,3 +1,5 @@
+## 2.3.3 (`2020-06-12`)
+- Added support for multi-line rich-text-enabled field labels
 ## 2.3.2 (`2020-06-09`)
 - Updated use of `getAutoId` based on the version of REDCap
   - From `v9.8.0` this function was moved to the `DataEntry` class

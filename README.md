@@ -20,12 +20,16 @@ This module does not yet support repeating events.
 - Data Access Group security
   - Users in a DAG will only see results from within their DAG
   - Users not assigned a DAG will see results regardless of DAG
+- Long text truncation
+  - To prevent dropdowns from extending off screen and table headers causing significant visual issues, field labels, structured data values (select, radio, checkbox), and Dynamic SQL results will be truncated down to 60 characters **OR** the first new line, whichever one comes first.
+  - If truncation causes visual text to be removed, an ellipsis (...) will be appended to the end.
+  - **NOTE:** An ellipsis only applies to multi-line labels if the first line exceeds 60 characters.
 
 ## Testing & Validation
 
 - REDCap
   - Minimum: 8.2.2
-  - Latest: 9.3.4
+  - Latest: 10.0.1
 - PHP
   - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0, up to PHP v7.1
 

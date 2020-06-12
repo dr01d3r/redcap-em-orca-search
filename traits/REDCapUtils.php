@@ -300,6 +300,9 @@ ORDER BY record, event_id DESC, instance DESC
                 $value[$k] = $this->truncate($v);
             }
         } else {
+            // account for rich text editor or multi-line labels
+            $v = preg_split("/\r\n|\n|<br>|<br \/>/", strip_tags($value, '<br>'));
+            $value = $v[0];
             if (strlen($value) > ($limit - 3)) {
                 $value = substr($value, 0, ($limit - 3)) . "...";
             }

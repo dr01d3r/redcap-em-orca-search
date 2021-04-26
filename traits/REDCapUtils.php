@@ -182,7 +182,7 @@ ORDER BY record, event_id DESC, instance DESC
             if (!is_null($row["instance"])) {
                 $instance = $row["instance"];
             }
-            if (!array_key_exists($row["field_name"], $allRecords[$row["record"]])) {
+            if (!isset($row["field_name"], $allRecords[$row["record"]])) {
                 $allRecords[$row["record"]][$row["field_name"]] = [];
             }
             $allRecords[$row["record"]][$row["field_name"]][] = [

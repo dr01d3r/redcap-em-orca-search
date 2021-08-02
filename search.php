@@ -115,7 +115,7 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
                 $config["search_fields"][$field_name]["wildcard"] = false;
                 break;
             case "checkbox":
-                $config["search_fields"][$field_name]["wildcard"] = true;
+                $config["search_fields"][$field_name]["wildcard"] = false;
                 break;
             default:
                 $config["search_fields"][$field_name]["wildcard"] = $search_field["search_field_name_wildcard"];

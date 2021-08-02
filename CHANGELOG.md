@@ -1,3 +1,6 @@
+## 2.3.4 (`2021-07-30`)
+- Fixed a bug where searches using checkbox fields would return too many results
+- Minor update for some PHP 8 support
 ## 2.3.3 (`2020-06-12`)
 - Added support for multi-line rich-text-enabled field labels
 ## 2.3.2 (`2020-06-09`)

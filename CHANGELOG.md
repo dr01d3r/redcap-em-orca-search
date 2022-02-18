@@ -1,3 +1,6 @@
+## 2.3.5 (`2022-02-18`)
+- Bump Smarty from 3.1.39 to 3.1.43
+- Minor refactor some defined constants to prevent cross-module conflicts
 ## 2.3.4 (`2021-07-30`)
 - Fixed a bug where searches using checkbox fields would return too many results
 - Minor update for some PHP 8 support

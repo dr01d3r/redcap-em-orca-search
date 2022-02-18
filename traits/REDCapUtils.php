@@ -294,7 +294,7 @@ ORDER BY record, event_id DESC, instance DESC
      * @param $limit int the total maximum length for the text
      * @return mixed the value after truncation
      */
-    public function truncate($value, $limit = MODULE_STRING_DISPLAY_LIMIT) {
+    public function truncate($value, $limit = ORCA_SEARCH_STRING_DISPLAY_LIMIT) {
         if (is_array($value)) {
             foreach ($value as $k => $v) {
                 $value[$k] = $this->truncate($v);

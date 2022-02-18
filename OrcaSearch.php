@@ -17,12 +17,13 @@ class OrcaSearch extends AbstractExternalModule {
     use \ORCA\OrcaSearch\REDCapUtils;
 
     private static $smarty;
+    public $_module_path = null;
 
     public function __construct()
     {
         parent::__construct();
-        define("MODULE_DOCROOT", $this->getModulePath());
-        define("MODULE_STRING_DISPLAY_LIMIT", 60);
+        $this->_module_path = $this->getModulePath();
+        define("ORCA_SEARCH_STRING_DISPLAY_LIMIT", 60);
     }
 
     public function redcap_module_link_check_display($project_id, $link) {
@@ -50,10 +51,10 @@ class OrcaSearch extends AbstractExternalModule {
 
     public function initializeSmarty() {
         self::$smarty = new \Smarty();
-        self::$smarty->setTemplateDir(MODULE_DOCROOT . 'templates');
-        self::$smarty->setCompileDir(MODULE_DOCROOT . 'templates_c');
-        self::$smarty->setConfigDir(MODULE_DOCROOT . 'configs');
-        self::$smarty->setCacheDir(MODULE_DOCROOT . 'cache');
+        self::$smarty->setTemplateDir($this->_module_path . 'templates');
+        self::$smarty->setCompileDir($this->_module_path . 'templates_c');
+        self::$smarty->setConfigDir($this->_module_path . 'configs');
+        self::$smarty->setCacheDir($this->_module_path . 'cache');
     }
 
     public function setTemplateVariable($key, $value) {

@@ -1,6 +1,6 @@
 ## 2.3.5 (`2022-02-18`)
 - Bump Smarty from 3.1.39 to 3.1.43
-- Minor refactor some defined constants to prevent cross-module conflicts
+- Minor refactor on some defined constants to prevent cross-module conflicts
 - Bumped EM framework from v1 to v6
    - As a result, minimum REDCap version to 10.4.1
    - Additionally, legacy bootstrap support (v3) was also able to be removed

@@ -14,11 +14,12 @@
       "institution": "Marshfield Clinic Research Institute"
     }
   ],
+  "framework-version": 6,
   "links": {
     "project": [
       {
         "name": "Search Dashboard",
-        "icon": "blog_pencil",
+        "icon": "fas fa-search",
         "url": "search.php"
       }
     ]
@@ -26,7 +27,7 @@
   "compatibility": {
     "php-version-min": "5.4.0",
     "php-version-max": "",
-    "redcap-version-min": "8.1.0",
+    "redcap-version-min": "10.4.1",
     "redcap-version-max": ""
   },
   "permissions": [

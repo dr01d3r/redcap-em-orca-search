@@ -416,12 +416,7 @@ $module->setTemplateVariable("orca_search_field_sorting", json_encode($fieldSort
 
 echo "<link rel='stylesheet' type='text/css' href='" . $module->getUrl('css/orca_search.css') . "' />";
 
-if (version_compare(REDCAP_VERSION, "8.7.0", ">=")) {
-    $module->displayTemplate('bs4/orca_search.tpl');
-} else {
-    $module->displayTemplate('bs3/orca_search.tpl');
-}
-
+$module->displayTemplate('orca_search.tpl');
 $module->addTime();
 $module->outputTimerInfo();
 

@@ -309,10 +309,12 @@ foreach ($records as $record_id => $record) { // Record
 
         // set the form_values array with the data we want to look at
         if ($metadata["forms"][$field_form_name]["repeating"]) {
+            # PHP 8 Fix: return empty array if repeating field value is null
+            $repeating_field_value = $record["repeat_instances"][$field_form_event_id][$field_form_name] ?? array();
             // TODO (ALL vs LATEST) consider finding the latest instance where the search value was found, and display that instead of always the latest
-            $form_values = end($record["repeat_instances"][$field_form_event_id][$field_form_name]);
+            $form_values = end($repeating_field_value);
             if ($config["show_instance_badge"] === true) {
-                $record_info[$field_name]["badge"] = key($record["repeat_instances"][$field_form_event_id][$field_form_name]);
+                $record_info[$field_name]["badge"] = key($repeating_field_value);
             }
         } else {
             $form_values = $record[$field_form_event_id];

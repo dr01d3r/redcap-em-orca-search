@@ -1,3 +1,6 @@
+## 2.3.6 (`2022-10-17`)
+- Bump Smarty from 3.1.43 to 3.1.47
+- Fixed PHP 8 issue where a display field exists on a repeating instrument that has no instances
 ## 2.3.5 (`2022-02-18`)
 - Bump Smarty from 3.1.39 to 3.1.43
 - Minor refactor on some defined constants to prevent cross-module conflicts

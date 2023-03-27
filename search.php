@@ -1,6 +1,5 @@
 <?php
 /** @var \ORCA\OrcaSearch\OrcaSearch $module */
-require_once APP_PATH_DOCROOT . 'ProjectGeneral/header.php';
 
 $module->initializeSmarty();
 $module->addTime();
@@ -422,4 +421,4 @@ $module->displayTemplate('orca_search.tpl');
 $module->addTime();
 $module->outputTimerInfo();
 
-require_once APP_PATH_DOCROOT . 'ProjectGeneral/footer.php';
+$module->outputModuleVersionJS();

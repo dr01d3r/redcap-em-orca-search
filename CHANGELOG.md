@@ -1,3 +1,6 @@
+## 2.3.7 (`2023-03-27`)
+- Fixed bug where the "New Record" button did not work properly in a mobile portrait layout
+- Fixed bug in module config that would warn of a missing required field when a checkbox was unchecked
 ## 2.3.6 (`2022-10-17`)
 - Bump Smarty from 3.1.43 to 3.1.47
 - Fixed PHP 8 issue where a display field exists on a repeating instrument that has no instances

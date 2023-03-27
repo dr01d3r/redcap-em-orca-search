@@ -30,7 +30,7 @@
             <div class="row">
                 <div class="form-group col-lg">
                     <label for="search-field">Select Search Field</label><br/>
-                    <select name="search-field" id="search-field" class="form-control">
+                    <select name="search-field" id="search-field" class="form-control form-select">
                         {foreach from=$config["search_fields"] key=field_name item=field_data}
                             {if $field_name === $search_info["search-field"]}
                                 <option selected="true" value="{$field_name}">{$field_data["value"]}</option>
@@ -44,15 +44,15 @@
                 {if $config["auto_numbering"]}
                     <div class="form-group col-lg d-none d-lg-block">
                         <label>New Record</label><br/>
-                        <button id="orca-search-new-record" type="button" class="btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                        <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
                     </div>
                 {else}
                     <div class="col-lg d-none d-lg-block">
                         <label>New Record</label><br/>
                         <div class="input-group">
-                            <input id="orca-search-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
+                            <input type="text" autocomplete="new-password" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
                             <span class="input-group-btn">
-                                <button id="orca-search-new-record" type="button" class="btn btn-secondary">{$config["new_record_text"]}</button>
+                                <button type="button" class="orca-search-new-record btn btn-secondary">{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>
@@ -68,11 +68,11 @@
                     {/if}
                     {foreach from=$config["search_fields"] key=field_name item=field_data}
                         {if isset($field_data["dictionary_values"])}
-                            <select class="form-control orca-search-field-select" id="{$field_name}">
+                            <select class="form-control form-select orca-search-field-select" id="{$field_name}">
                                 <option value="">--</option>
                                 {foreach from=$field_data["dictionary_values"] key=dd_key item=dd_value}
                                     {if $field_name === $search_info["search-field"] && $search_info["search-value"] === "$dd_key"}
-                                        <option selected="true" value="{$dd_key}">{$dd_value}</option>
+                                        <option selected="selected" value="{$dd_key}">{$dd_value}</option>
                                     {else}
                                         <option value="{$dd_key}">{$dd_value}</option>
                                     {/if}
@@ -101,15 +101,15 @@
                 {if $config["auto_numbering"]}
                     <div class="form-group col-12 d-lg-none">
                         <label>New Record</label><br/>
-                        <button id="orca-search-new-record" type="button" class="btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                        <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
                     </div>
                 {else}
                     <div class="col-12 d-lg-none">
                         <label>New Record</label><br/>
                         <div class="input-group">
-                            <input id="orca-search-new-record-id" type="text" class="form-control" placeholder="New {$config["new_record_label"]}" />
+                            <input type="text" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
                             <span class="input-group-btn">
-                                <button id="orca-search-new-record" type="button" class="btn btn-secondary">{$config["new_record_text"]}</button>
+                                <button type="button" class="orca-search-new-record btn btn-secondary">{$config["new_record_text"]}</button>
                             </span>
                         </div>
                     </div>
@@ -185,17 +185,19 @@
     $(function () {
         function setSearchControl(clearValue) {
             $(".orca-search-field-select").hide();
-            $("#search-value").hide();
+            let $searchValue = $("#search-value");
+            $searchValue.hide();
 
             if (clearValue === true) {
-                $("#search-value").val('');
+                $searchValue.val('');
             }
 
-            var val = $("#search-field").val();
-            if ($("#" + val).length > 0) {
-                $("#" + val).show().change();
+            let val = $("#search-field").val();
+            let $val = $(`#${ val }`);
+            if ($val.length > 0) {
+                $val.show().change();
             } else {
-                $("#search-value").show();
+                $searchValue.show();
             }
         }
         var table = $("#orca_search_table").dataTable({
@@ -209,7 +211,7 @@
 
         $("input[type='search']").on("keydown keypress", function (event) {
             if (event.which === 8) {
-                tabledraw();
+                table.draw();
                 event.stopPropagation();
             }
         });
@@ -218,12 +220,13 @@
             $("#search-value").focus();
         }
 
-        $("body").on("click", "#orca-search-new-record", function() {
+        $("body").on("click", "button.orca-search-new-record:visible", function() {
             {if $config["auto_numbering"]}
             window.location.href = '{$config["new_record_url"]}' + '&id=' + '{$config["new_record_auto_id"]}';
             {else}
-            var refocus = false;
-            var idval = trim($('#orca-search-new-record-id').val());
+            let refocus = false;
+            let $id = $('input.orca-search-new-record-id:visible');
+            let idval = trim($id.val());
             if (idval.length < 1) {
                 return;
             }
@@ -234,14 +237,14 @@
             if (refocus) {
                 setTimeout(function(){ document.getElementById('orca-search-new-record-id').focus(); },10);
             } else {
-                $('#orca-search-new-record-id').val(idval);
-                idval = $('#orca-search-new-record-id').val();
+                $id.val(idval);
+                idval = $id.val();
                 idval = idval.replace(/&quot;/g,''); // HTML char code of double quote
-                var validRecordName = recordNameValid(idval);
+                let validRecordName = recordNameValid(idval);
                 if (validRecordName !== true) {
-                    $('#orca-search-new-record-id').val('');
+                    $id.val('');
                     alert(validRecordName);
-                    $('#orca-search-new-record-id').focus();
+                    $id.focus();
                     return false;
                 }
                 window.location.href = '{$config["new_record_url"]}' + '&id=' + idval;

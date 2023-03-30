@@ -68,7 +68,7 @@
                     {/if}
                     {foreach from=$config["search_fields"] key=field_name item=field_data}
                         {if isset($field_data["dictionary_values"])}
-                            <select class="form-control form-select orca-search-field-select" id="{$field_name}">
+                            <select class="form-control form-select orca-search-field-select" data-field-name="{$field_name}">
                                 <option value="">--</option>
                                 {foreach from=$field_data["dictionary_values"] key=dd_key item=dd_value}
                                     {if $field_name === $search_info["search-field"] && $search_info["search-value"] === "$dd_key"}
@@ -193,8 +193,8 @@
             }
 
             let val = $("#search-field").val();
-            let $val = $(`#${ val }`);
-            if ($val.length > 0) {
+            let $val = $(`.orca-search-field-select[data-field-name='${ val }']`);
+            if ($val.length === 1) {
                 $val.show().change();
             } else {
                 $searchValue.show();

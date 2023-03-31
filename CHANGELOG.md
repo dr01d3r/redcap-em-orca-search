@@ -1,4 +1,5 @@
 ## 2.3.7 (`2023-03-27`)
+- Bump Smarty from 3.1.47 to 3.1.48
 - Fixed bug where the "New Record" button did not work properly in a mobile portrait layout
 - Fixed bug in module config that would warn of a missing required field when a checkbox was unchecked
 ## 2.3.6 (`2022-10-17`)

@@ -11,32 +11,6 @@ trait REDCapUtils {
 
     // TODO REDCap date validation type mapping
 
-    private static $_REDCapConn;
-
-    protected static function _getREDCapConn() {
-        if (empty(self::$_REDCapConn)) {
-            global $conn;
-            self::$_REDCapConn = $conn;
-        }
-        return self::$_REDCapConn;
-    }
-
-    /**
-     * Pulled from AbstractExternalModule
-     * For broad REDCap version compatibility
-     * @return string|null
-     */
-    public function getPID() {
-        $pid = @$_GET['pid'];
-
-        // Require only digits to prevent sql injection.
-        if (ctype_digit($pid)) {
-            return $pid;
-        } else {
-            return null;
-        }
-    }
-
     public function getAutoId() {
         if (version_compare(REDCAP_VERSION, "9.8.0", ">=")) {
             return \DataEntry::getAutoId();
@@ -125,122 +99,97 @@ trait REDCapUtils {
     }
 
     /**
-     * NOTE: Passing in at least one fieldValue or orderBy will significantly improve performance
-     *
-     * NOTE: Avoiding the use of the % wildcard will significantly improve performance
-     *
-     * NOTE: Boolean true for a field value will require only that the field exists for the record
-     *
-     * "record_ids" will contain the record_ids for the given parameters
-     *
-     * @param  array $searchConfig - An array of field_name to values; if they match (see $instanceToMatch), the record is returned
-     * @param  string $instanceToMatch - "LATEST" to check fields against just the latest instance, or "ALL" to check against all instances
-     *
-     * @return array|false - An array of record ids, or [{associated information elements}, "records_ids" => [1,2,3]] if requested, or false if no search criteria was provided
-     *
+     * Search the project for a value in a specific field.
+     * @since 2.4.0
+     * @param $project_id
+     * @param $search_field string Field to search
+     * @param $search_value string Value to search for
+     * @param $search_mode string Use "wildcard" for wildcard matching.  Use "equals" for exact match.
+     * @param $instance_mode string Use "LATEST" to check fields against just the latest instance, or "ALL" to check against all instances
+     * @return array|false Returns false if no search value was provided.
      * @throws Exception
      */
-    public function getProjectRecordIds($searchConfig, $instanceToMatch = "LATEST") {
-        $validInstanceToMatchTypes = [ "LATEST", "ALL" ];
+    public function search($project_id, $search_field, $search_value, $search_mode = "equals", $instance_mode = "LATEST") {
+        $valid_search_modes = [ "wildcard", "equals" ];
+        $valid_instance_modes = [ "LATEST", "ALL" ];
 
-        if ($searchConfig === null) {
+        // exit if parameters are missing
+        if ($search_field === null || $search_field === '') {
+            throw new Exception("Search field required!");
+        }
+        if (!in_array($search_mode, $valid_search_modes)) {
+            throw new Exception("Search mode value of '{$search_mode}' is invalid. Allowable values: " . implode(", ", $valid_search_modes));
+        }
+        if (!in_array($instance_mode, $valid_instance_modes)) {
+            throw new Exception("Instance match value of '{$instance_mode}' is invalid. Allowable values: " . implode(", ", $valid_instance_modes));
+        }
+        // return FALSE if search value is empty
+        if ($search_value === null || $search_value === '') {
             return false;
         }
-        $searchConfig = array_filter($searchConfig, function($v) {
-           return $v["value"] !== null && $v["value"] !== '';
-        });
-        if (empty($searchConfig)) {
-            return false;
-        }
-        if (!in_array($instanceToMatch, $validInstanceToMatchTypes)) {
-            throw new Exception(sprintf("PARAMETER_OF_TYPE_INVALID", "\$instanceToMatch", $instanceToMatch));
-        }
 
-        $project_id = $this->getPID();
-        $sqlFieldNameInclusion = "";
+        // initialize the project to validate context
+        $proj = new \Project($project_id);
 
-        foreach ($searchConfig as $field => $fieldInfo) {
-            $searchConfig[$field]["value"] = $this->_getREDCapConn()->real_escape_string($fieldInfo["value"]);
-        }
+        // get the data_table context
+        $data_table = method_exists('\REDCap', 'getDataTable') ? \REDCap::getDataTable($project_id) : "redcap_data";
 
-        if (!empty($searchConfig)) {
-            $sqlFieldNameInclusion = "AND field_name IN ( '" . implode("', '", array_keys($searchConfig)) . "' )";
-        }
+        // execute the query
+        $sql_result = $this->query("SELECT record, event_id, COALESCE(instance, 1) 'instance', field_name, value
+FROM {$data_table}
+WHERE project_id = ?
+AND field_name = ?
+ORDER BY CAST(record as UNSIGNED), event_id DESC, COALESCE(instance, 1) DESC
+", [
+            $project_id,
+            $search_field
+        ]);
 
-        $primarySql = "
-SELECT record, event_id, field_name, value, instance
-FROM redcap_data
-WHERE project_id = $project_id
-$sqlFieldNameInclusion
-ORDER BY record, event_id DESC, instance DESC
-";
-
-        $primaryResult = $this->_getREDCapConn()->query($primarySql);
-        $allRecords = [];
-        while ($row = $primaryResult->fetch_assoc()) {
-            $instance = 1;
-            if (!is_null($row["instance"])) {
-                $instance = $row["instance"];
+        // load results to memory
+        $records = [];
+        while($row = db_fetch_assoc($sql_result)) {
+            if (!isset($records[$row["record"]][$row["field_name"]])) {
+                $records[$row["record"]][$row["field_name"]] = [];
             }
-            if (!isset($row["field_name"], $allRecords[$row["record"]])) {
-                $allRecords[$row["record"]][$row["field_name"]] = [];
-            }
-            $allRecords[$row["record"]][$row["field_name"]][] = [
+            $records[$row["record"]][$row["field_name"]][] = [
                 "event_id" => $row["event_id"],
-                "instance" => $instance,
+                "instance" => $row["instance"],
                 "value" => $row["value"]
             ];
         }
-        $primaryResult->free_result();
+        $sql_result->free_result();
 
-        $filteredRecords = [];
-        foreach ($allRecords as $recordId => $record) {
-            // initialize the search results to false
-            $matchResults = array_fill_keys(array_keys($searchConfig), false);
+        // main record loop
+        $records_filtered = [];
+        foreach ($records as $record_id => $record) {
 
-            foreach ($searchConfig as $searchField => $searchFieldInfo) {
-                // consider it a match if the search value is 'empty'
-                if ($searchFieldInfo["value"] === '' || $searchFieldInfo["value"] === null) {
-                    $matchResults[$searchField]["match"] = true;
-                    // TODO move out of the loop when multiple search field support is added
-                    $filteredRecords[$recordId] = true;
-                    continue;
-                }
+            // default the values to search to be all instances found
+            $arrayToSearch = $record[$search_field];
+            // if it was specified to only search the most recent instance
+            if ($instance_mode === "LATEST") {
+                // set the search array to only be the first result (sorted DESC in sql)
+                $arrayToSearch = [ reset($arrayToSearch) ];
+            }
 
-                // default the values to search to be all instances found
-                $arrayToSearch = $record[$searchField];
-                // if it was specified to only search the most recent instance
-                if ($instanceToMatch === "LATEST") {
-                    // set the search array to only be the first result (sorted descending in sql)
-                    $arrayToSearch = [ reset($arrayToSearch) ];
-                }
+            // look for results of the search value in the record data
+            foreach ($arrayToSearch as $search) {
+                // ignore empty/missing values
+                if ($search["value"] === '' || $search["value"] === null) continue;
 
-                // look for results of the search value in the record data
-                foreach ($arrayToSearch as $search) {
-                    // ignore empty/missing values
-                    if ($search["value"] === '' || $search["value"] === null) continue;
-
-                    if ($searchFieldInfo["mode"] === "strpos") {
-                        if (stripos($search["value"], $searchFieldInfo["value"]) !== false) {
-//                            $this->preout("WILDCARD MATCH $instanceToMatch -> record: $recordId | event: {$search["event_id"]} | instance: {$search["instance"]} | field: $searchField | value: {$search["value"]}");
-                            $matchResults[$searchField]["match"] = true;
-                            // TODO move out of the loop when multiple search field support is added
-                            $filteredRecords[$recordId] = true;
-                            break;
-                        }
-                    } else {
-                        if (strcasecmp($search["value"], $searchFieldInfo["value"]) === 0) {
-//                            $this->preout("EXACT MATCH $instanceToMatch -> record: $recordId | event: {$search["event_id"]} | instance: {$search["instance"]} | field: $searchField | value: {$search["value"]}");
-                            $matchResults[$searchField]["match"] = true;
-                            // TODO move out of the loop when multiple search field support is added
-                            $filteredRecords[$recordId] = true;
-                            break;
-                        }
+                if ($search_mode === "wildcard") {
+                    if (stripos($search["value"], $search_value) !== false) {
+                        $records_filtered[$record_id] = $search;
+                        break;
+                    }
+                } else {
+                    if (strcasecmp($search["value"], $search_value) === 0) {
+                        $records_filtered[$record_id] = $search;
+                        break;
                     }
                 }
             }
         }
-        return array_keys($filteredRecords);
+        return $records_filtered;
     }
 
     public function getDateFormatFromREDCapValidationType($field_name) {
@@ -294,7 +243,7 @@ ORDER BY record, event_id DESC, instance DESC
      * @param $limit int the total maximum length for the text
      * @return mixed the value after truncation
      */
-    public function truncate($value, $limit = ORCA_SEARCH_STRING_DISPLAY_LIMIT) {
+    public function truncate($value, $limit = 60) {
         if (is_array($value)) {
             foreach ($value as $k => $v) {
                 $value[$k] = $this->truncate($v);

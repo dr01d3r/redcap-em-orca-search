@@ -88,7 +88,7 @@
                     {else}
                         <label>&nbsp;</label><br/>
                     {/if}
-                    <button id="orca-search" type="button" class="btn btn-info form-control">Search</button>
+                    <button id="orca-search" type="button" class="btn btn-info text-white form-control">Search</button>
                 </div>
             </div>
             <div class="row">
@@ -96,7 +96,7 @@
                     {if $config["result_limit"] > 0}
                         <label>Limit: <i style="font-weight: normal;">{$config["result_limit"]}</i></label>
                     {/if}
-                    <button id="orca-search" type="button" class="btn btn-info form-control">Search</button>
+                    <button id="orca-search" type="button" class="btn btn-info text-white form-control">Search</button>
                 </div>
                 {if $config["auto_numbering"]}
                     <div class="form-group col-12 d-lg-none">

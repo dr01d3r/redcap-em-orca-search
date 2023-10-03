@@ -1,3 +1,7 @@
+## 2.4.0 (`2023-XX-XX`)
+- SQL query updated to proactively support new `data_table_X` implementation
+- Refactored the primary method that does the SQL search and filtering
+- Minor code cleanup
 ## 2.3.7 (`2023-03-27`)
 - Bump Smarty from 3.1.47 to 3.1.48
 - Fixed bug where the "New Record" button did not work properly in a mobile portrait layout

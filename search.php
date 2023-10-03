@@ -113,8 +113,6 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
             case "select":
             case "radio":
             case "sql":
-                $config["search_fields"][$field_name]["wildcard"] = false;
-                break;
             case "checkbox":
                 $config["search_fields"][$field_name]["wildcard"] = false;
                 break;
@@ -168,6 +166,7 @@ foreach ($module->getSubSettings("display_fields") as $display_field) {
         ];
         switch ($Proj->metadata[$field_name]["element_type"]) {
             case "sql":
+                // TODO this will never work when context is piped via [smart-variables]
                 // add 'dd' to custom_dictionary_values if not already there
                 if (!isset($metadata["custom_dictionary_values"][$field_name])) {
                     $sql_enum = parseEnum(getSqlFieldEnum($Proj->metadata[$field_name]['element_enum']));

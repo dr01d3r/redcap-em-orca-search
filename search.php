@@ -1,4 +1,5 @@
 <?php
+/** @var \Project $Proj */
 /** @var \ORCA\OrcaSearch\OrcaSearch $module */
 
 $module->initializeSmarty();
@@ -15,7 +16,7 @@ $config = [
     "redcap_images_path" => APP_PATH_IMAGES,
     "module_version" => $module->VERSION,
     "new_record_url" => APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
-        "pid" => $module->getPid(),
+        "pid" => $Proj->project_id,
         "auto" => "1"
     ]),
     "include_dag" => false,
@@ -55,9 +56,10 @@ $debug = [];
 $records = [];
 $results = [];
 
-$recordIds = null;
+$recordIds = [];
 $recordCount = null;
 $searchConfig = null;
+$search_results = [];
 
 /*
  * Build the Form/Field Metadata
@@ -232,7 +234,7 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
         ];
 
         if ($config["search_fields"][$search_field]["wildcard"] === true) {
-            $searchConfig[$search_field]["mode"] = "strpos";
+            $searchConfig[$search_field]["mode"] = "wildcard";
         } else {
             $searchConfig[$search_field]["mode"] = "equals";
         }
@@ -248,13 +250,13 @@ if (isset($_POST["search-field"]) && isset($_POST["search-value"])) {
             }
         }
 
-        $recordIds = $module->getProjectRecordIds($searchConfig, $config["instance_search"]);
-        // getProjectRecordIds() returns false if no search values are specified
+        $search_results = $module->search($Proj->project_id, $search_field, $search_value, $searchConfig[$search_field]["mode"], $config["instance_search"]);
         // this will trigger a full data pull in the next step, so just grab the total record count in the project
-        if ($recordIds === false) {
-            $recordCount = \Records::getRecordCount($module->getPID());
+        if ($search_results === false) {
+            $recordCount = \Records::getRecordCount($Proj->project_id);
         } else {
-            $recordCount = count($recordIds);
+            $recordCount = count($search_results);
+            $recordIds = array_keys($search_results);
         }
     } catch (Exception $ex) {
         $config["errors"][] = $ex->getMessage();
@@ -266,7 +268,7 @@ if ($recordCount === 0) {
 } else if ($recordCount != null && !empty($config["result_limit"]) && $recordCount > $config["result_limit"]) {
     $config["errors"][] = "Too many results found ($recordCount).  Please be more specific (limit {$config["result_limit"]}).";
 } else if ($recordCount > 0) {
-    $records = \REDCap::getData($module->getPid(), 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
+    $records = \REDCap::getData($Proj->project_id, 'array', $recordIds, array_keys($config["display_fields"]), null, $config["user_dag"], false, $config["include_dag"]);
 }
 
 if (empty($config["search_fields"])) {
@@ -282,7 +284,7 @@ if (empty($config["display_fields"])) {
 foreach ($records as $record_id => $record) { // Record
 
     $dashboard_url = APP_PATH_WEBROOT . "DataEntry/record_home.php?" . http_build_query([
-            "pid" => $module->getPid(),
+            "pid" => $Proj->project_id,
             "id" => $record_id
         ]);
 

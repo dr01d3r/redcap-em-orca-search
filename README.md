@@ -15,6 +15,7 @@ This module does not yet support repeating events.
 - Configurable field search options
 - Configurable field display options
 - New Record support for projects with and without auto-numbering enabled
+- Only Super Users or project users with explicit "Create Record" rights will see the "Add new record" button
 - Result highlighting when searching with partial matching enabled
 - Support for searching through repeating forms
 - Data Access Group security
@@ -29,9 +30,9 @@ This module does not yet support repeating events.
 
 - REDCap
   - Minimum: 8.2.2
-  - Latest: 10.0.1
+  - Latest: 14.3.7
 - PHP
-  - This module has been tested against all major versions of PHP that are supported by REDCap >= 8.0.0, up to PHP v7.1
+  - This module has been tested against all major versions of PHP that are supported by REDCap
 
 ## Permissions
 
@@ -62,6 +63,8 @@ This module does not yet support repeating events.
   - This option only works if the project uses Data Access Groups.
 - **Prevent an empty search from yielding results**
   - Forces users to always provide a value when searching.  This can be useful when you want to restrict access to records (i.e. MRN exact match).
+- **Specify 'Record Home' button location in display fields table (default=Last Column)**
+  - Allow the record home button to be the first or last column, or not displayed at all
 - **Search Fields**
   - This repeating configuration allows you to select the fields that you want to use as search fields.
   - Fields will display in the dropdown, in the order that exist in the config.

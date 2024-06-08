@@ -1,5 +1,6 @@
 {
   "config": {
+    "autoloader-suffix": "_ORCA_SEARCH",
     "platform": {
       "php": "7.2.5"
     }

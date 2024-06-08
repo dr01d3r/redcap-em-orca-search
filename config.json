@@ -98,26 +98,6 @@
       "type": "checkbox"
     },
     {
-      "key": "record_home_display",
-      "name": "Specify 'Record Home' button location in display fields table (default=Last Column)",
-      "required": false,
-      "type": "dropdown",
-      "choices": [
-        {
-          "value": "none",
-          "name": "None"
-        },
-        {
-          "value": "first",
-          "name": "First Column"
-        },
-        {
-          "value": "last",
-          "name": "Last Column"
-        }
-      ]
-    },
-    {
       "key": "search_fields",
       "name": "Searchable Fields",
       "required": true,

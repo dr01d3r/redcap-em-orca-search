@@ -1,7 +1,4 @@
-## 2.4.1
-- The "Add new record" button no longer displays if the user does not have "Create Record" user rights
-- The Record Home button location in the display table can now be configured (None|First Column|**Last Column**)
-## 2.4.0
+## 2.4.0 (`2023-XX-XX`)
 - SQL query updated to proactively support new `data_table_X` implementation
 - Refactored the primary method that does the SQL search and filtering
 - Minor code cleanup

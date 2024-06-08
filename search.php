@@ -5,16 +5,11 @@
 $module->initializeSmarty();
 $module->addTime();
 
-$super_user = defined("SUPER_USER") && SUPER_USER;
-$username = defined("USERID") ? USERID : null;
-$user_rights = \REDCap::getUserRights($username)[$username];
 $config = [
     "result_limit" => intval($module->getProjectSetting("search_limit")),
     "has_repeating_forms" => $Proj->hasRepeatingForms(),
     "instance_search" => $module->getProjectSetting("instance_search"),
     "show_instance_badge" => $module->getProjectSetting("show_instance_badge"),
-    "record_home_display" => $module->getProjectSetting("record_home_display") ?? "last",
-    "record_create" => ($super_user || ($user_rights["record_create"] ?? false)),
     "auto_numbering" => $Proj->project["auto_inc_set"] === "1",
     "new_record_label" => $Proj->table_pk_label,
     "new_record_text" => $lang['data_entry_46'],
@@ -32,6 +27,7 @@ $config = [
     "messages" => [],
     "errors" => []
 ];
+
 $metadata = [
     "fields" => [],
     "forms" => [],
@@ -94,8 +90,8 @@ if ($config["has_repeating_forms"]) {
     }
 }
 
-if (!empty($user_rights["group_id"])) {
-    $config["user_dag"] = \REDCap::getGroupNames(true, $user_rights["group_id"]);
+if (!empty(\REDCap::getUserRights(USERID)[USERID]["group_id"])) {
+    $config["user_dag"] = \REDCAP::getGroupNames(true, \REDCap::getUserRights(USERID)[USERID]["group_id"]);
 }
 
 foreach ($module->getSubSettings("search_fields") as $search_field) {
@@ -154,10 +150,6 @@ foreach ($module->getSubSettings("search_fields") as $search_field) {
 
 //used to keep track of the zero-based index of each column (because the table displays columns from $config["display_fields"] in the order they appear in here)
 $fieldIndex = 0;
-// offset if record home is configured as 1st column
-if ($config["record_home_display"] === "first") {
-    $fieldIndex++;
-}
 $fieldSortingInfo = [];
 foreach ($module->getSubSettings("display_fields") as $display_field) {
     if (empty($display_field["display_field_name"])) continue;

@@ -41,23 +41,21 @@
                     </select>
                 </div>
                 {* This condition is copied below for responsiveness support *}
-                {if $config["record_create"]}
-                    {if $config["auto_numbering"]}
-                        <div class="form-group col-lg d-none d-lg-block">
-                            <label>New Record</label><br/>
-                            <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
-                        </div>
-                    {else}
-                        <div class="col-lg d-none d-lg-block">
-                            <label>New Record</label><br/>
-                            <div class="input-group">
-                                <input type="text" autocomplete="new-password" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
-                                <span class="input-group-btn">
+                {if $config["auto_numbering"]}
+                    <div class="form-group col-lg d-none d-lg-block">
+                        <label>New Record</label><br/>
+                        <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                    </div>
+                {else}
+                    <div class="col-lg d-none d-lg-block">
+                        <label>New Record</label><br/>
+                        <div class="input-group">
+                            <input type="text" autocomplete="new-password" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
+                            <span class="input-group-btn">
                                 <button type="button" class="orca-search-new-record btn btn-secondary">{$config["new_record_text"]}</button>
                             </span>
-                            </div>
                         </div>
-                    {/if}
+                    </div>
                 {/if}
             </div>
             <div class="row">
@@ -100,21 +98,21 @@
                     {/if}
                     <button id="orca-search" type="button" class="btn btn-info text-white form-control">Search</button>
                 </div>
-                {if $config["record_create"]}
-                    {if $config["auto_numbering"]}
-                        <div class="form-group col-12 d-lg-none">
-                            <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                {if $config["auto_numbering"]}
+                    <div class="form-group col-12 d-lg-none">
+                        <label>New Record</label><br/>
+                        <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                    </div>
+                {else}
+                    <div class="col-12 d-lg-none">
+                        <label>New Record</label><br/>
+                        <div class="input-group">
+                            <input type="text" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
+                            <span class="input-group-btn">
+                                <button type="button" class="orca-search-new-record btn btn-secondary">{$config["new_record_text"]}</button>
+                            </span>
                         </div>
-                    {else}
-                        <div class="col-12 d-lg-none">
-                            <div class="input-group">
-                                <input type="text" class="orca-search-new-record-id form-control" placeholder="New {$config["new_record_label"]}" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="orca-search-new-record btn btn-secondary">{$config["new_record_text"]}</button>
-                                </span>
-                            </div>
-                        </div>
-                    {/if}
+                    </div>
                 {/if}
             </div>
         </form>
@@ -136,31 +134,15 @@
         <table id="orca_search_table" class="table table-bordered table-condensed table-hover">
             <thead>
             <tr>
-                {if $config["record_home_display"] === "first"}
-                    <th class="header">Record Home</th>
-                {/if}
                 {foreach from=$config["display_fields"] key=col_name item=col_value}
                     <th class="header">{$col_value["label"]}</th>
                 {/foreach}
-                {if $config["record_home_display"] === "last"}
-                    <th class="header">Record Home</th>
-                {/if}
+                <th class="header">Record Home</th>
             </tr>
             </thead>
             <tbody>
             {foreach from=$data key=record_id item=record}
                 <tr>
-                    {if $config["record_home_display"] === "first"}
-                        <td>
-                            <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
-                            <span class="ui-button-text">
-                                <span class="ui-button-text">
-                                    <i class="fas fa-edit"></i>&nbsp;Open
-                                </span>
-                            </span>
-                            </a>
-                        </td>
-                    {/if}
                     {foreach from=$config["display_fields"] key=col_name item=col_value}
                         <td{if !empty($record[$col_name]["__SORT__"])} data-sort="{$record[$col_name]["__SORT__"]}"{/if}>
                             {if !empty($record[$col_name]["badge"])}
@@ -179,17 +161,15 @@
                             {/if}
                         </td>
                     {/foreach}
-                    {if $config["record_home_display"] === "last"}
-                        <td>
-                            <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                    <td>
+                        <a href="{$record["dashboard_url"]}" class="jqbuttonmed ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
                             <span class="ui-button-text">
                                 <span class="ui-button-text">
                                     <i class="fas fa-edit"></i>&nbsp;Open
                                 </span>
                             </span>
-                            </a>
-                        </td>
-                    {/if}
+                        </a>
+                    </td>
                 </tr>
             {/foreach}
             </tbody>

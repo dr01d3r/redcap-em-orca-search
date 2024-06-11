@@ -29,10 +29,11 @@ This module does not yet support repeating events.
 ## Testing & Validation
 
 - REDCap
-  - Minimum: 8.2.2
-  - Latest: 14.3.7
+  - Minimum: v13.1.0 STD (v13.1.5 LTS)
+  - Latest:  v14.3.7 STD
 - PHP
-  - This module has been tested against all major versions of PHP that are supported by REDCap
+  - Minimum: v7.2.5
+  - Latest:  v8.1.29
 
 ## Permissions
 

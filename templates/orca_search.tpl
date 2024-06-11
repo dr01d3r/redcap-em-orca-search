@@ -45,7 +45,7 @@
                     {if $config["auto_numbering"]}
                         <div class="form-group col-lg d-none d-lg-block">
                             <label>New Record</label><br/>
-                            <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                            <button type="button" class="orca-search-new-record btn btn-secondary w-100">{$config["new_record_text"]}</button>
                         </div>
                     {else}
                         <div class="col-lg d-none d-lg-block">
@@ -90,7 +90,7 @@
                     {else}
                         <label>&nbsp;</label><br/>
                     {/if}
-                    <button id="orca-search" type="button" class="btn btn-info text-white form-control">Search</button>
+                    <button id="orca-search" type="button" class="btn btn-info text-white w-100">Search</button>
                 </div>
             </div>
             <div class="row">
@@ -98,12 +98,12 @@
                     {if $config["result_limit"] > 0}
                         <label>Limit: <i style="font-weight: normal;">{$config["result_limit"]}</i></label>
                     {/if}
-                    <button id="orca-search" type="button" class="btn btn-info text-white form-control">Search</button>
+                    <button id="orca-search" type="button" class="btn btn-info text-white w-100">Search</button>
                 </div>
                 {if $config["record_create"]}
                     {if $config["auto_numbering"]}
                         <div class="form-group col-12 d-lg-none">
-                            <button type="button" class="orca-search-new-record btn btn-secondary form-control">{$config["new_record_text"]}</button>
+                            <button type="button" class="orca-search-new-record btn btn-secondary w-100">{$config["new_record_text"]}</button>
                         </div>
                     {else}
                         <div class="col-12 d-lg-none">

@@ -2,7 +2,7 @@
 /** @var \Project $Proj */
 /** @var \ORCA\OrcaSearch\OrcaSearch $module */
 
-$module->initializeSmarty();
+$module->initializeSmarty($module->getModulePath());
 $module->addTime();
 
 $super_user = defined("SUPER_USER") && SUPER_USER;

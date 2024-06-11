@@ -8,6 +8,7 @@ use ExternalModules\ExternalModules;
 
 require_once 'vendor/autoload.php';
 require_once 'traits/REDCapUtils.php';
+require_once 'traits/SmartyUtils.php';
 
 /**
  * Class OrcaSearch
@@ -15,8 +16,7 @@ require_once 'traits/REDCapUtils.php';
  */
 class OrcaSearch extends AbstractExternalModule {
     use \ORCA\OrcaSearch\REDCapUtils;
-
-    private static $smarty;
+    use \ORCA\OrcaSearch\SmartyUtils;
 
     public function redcap_module_link_check_display($project_id, $link) {
         return true;
@@ -39,22 +39,5 @@ class OrcaSearch extends AbstractExternalModule {
             <?php
         }
         echo "<script src='" . $this->getUrl('js/orca_search.js') . "'></script>";
-    }
-
-    public function initializeSmarty() {
-        $module_path = $this->getModulePath();
-        self::$smarty = new \Smarty();
-        self::$smarty->setTemplateDir($module_path . 'templates');
-        self::$smarty->setCompileDir($module_path . 'templates_c');
-        self::$smarty->setConfigDir($module_path . 'configs');
-        self::$smarty->setCacheDir($module_path . 'cache');
-    }
-
-    public function setTemplateVariable($key, $value) {
-        self::$smarty->assign($key, $value);
-    }
-
-    public function displayTemplate($template) {
-        self::$smarty->display($template);
     }
 }

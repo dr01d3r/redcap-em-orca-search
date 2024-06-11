@@ -2,10 +2,10 @@
   "config": {
     "autoloader-suffix": "_ORCA_SEARCH",
     "platform": {
-      "php": "7.2.5"
+      "php": "8.1.29"
     }
   },
   "require": {
-    "smarty/smarty": "~3.1"
+    "smarty/smarty": "~5.3"
   }
 }

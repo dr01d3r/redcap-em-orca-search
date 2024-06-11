@@ -2,7 +2,7 @@
   "config": {
     "autoloader-suffix": "_ORCA_SEARCH",
     "platform": {
-      "php": "8.1.29"
+      "php": "7.2.5"
     }
   },
   "require": {

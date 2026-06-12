@@ -14,124 +14,95 @@
       "institution": "Marshfield Clinic Research Institute"
     }
   ],
-  "framework-version": 12,
+  "framework-version": 15,
   "links": {
     "project": [
       {
-        "name": "Search Dashboard",
-        "icon": "fas fa-search",
+        "name": "Orca Search Configuration",
+        "icon": "fa-solid fa-gears",
+        "url": "config.php",
+        "show-header-and-footer": true,
+        "restricted": true
+      },
+      {
+        "name": "Orca Search Dashboard",
+        "icon": "fa-solid fa-search",
         "url": "search.php",
         "show-header-and-footer": true
       }
     ]
   },
+  "auth-ajax-actions": [
+    "initialize-config-dashboard",
+    "initialize-search-dashboard",
+    "search",
+    "save-module-config"
+  ],
   "project-settings": [
     {
       "key": "replace_add_edit",
-      "name": "Replace the <span style='color: #800000;'>Add/Edit Records</span> link with a link to this module's search page<br/><small><b>NOTE:</b> a <i class='fas fa-info-circle' style='display: inline;color: #800000;'></i> tooltip icon will appear next to the link when this is enabled</small>",
-      "required": false,
-      "type": "checkbox"
+      "name": "Replace the Add/Edit Records link with a link to this module's search page?",
+      "type": "checkbox",
+      "hidden": true
     },
     {
       "key": "search_limit",
       "name": "Limit the search results",
-      "required": true,
-      "type": "dropdown",
-      "choices": [
-        {
-          "value": 0,
-          "name": "No Limit"
-        },
-        {
-          "value": 500,
-          "name": "500"
-        },
-        {
-          "value": 1000,
-          "name": "1000"
-        },
-        {
-          "value": 2000,
-          "name": "2000"
-        },
-        {
-          "value": 5000,
-          "name": "5000"
-        }
-      ]
+      "type": "text",
+      "hidden": true
     },
     {
       "key": "instance_search",
       "name": "Which instances to search through",
-      "required": true,
-      "type": "dropdown",
-      "choices": [
-        {
-          "value": "LATEST",
-          "name": "Latest"
-        },
-        {
-          "value": "ALL",
-          "name": "All"
-        }
-      ]
-    },
-    {
-      "key": "show_instance_badge",
-      "name": "Show Instance Badge",
-      "required": false,
-      "type": "checkbox"
+      "type": "text",
+      "hidden": true
     },
     {
       "key": "include_dag_if_exists",
       "name": "Include DAG in results (only if project uses DAGs)",
-      "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+      "hidden": true
     },
     {
       "key": "empty_search_disabled",
       "name": "Prevent an empty search from yielding results",
-      "required": false,
-      "type": "checkbox"
+      "type": "checkbox",
+      "hidden": true
     },
     {
       "key": "record_home_display",
-      "name": "Specify 'Record Home' button location in display fields table (default=Last Column)",
-      "required": false,
-      "type": "dropdown",
-      "choices": [
-        {
-          "value": "none",
-          "name": "None"
-        },
-        {
-          "value": "first",
-          "name": "First Column"
-        },
-        {
-          "value": "last",
-          "name": "Last Column"
-        }
-      ]
+      "name": "Where to position Record Home button in the display fields table (default=Last Column, use None to hide it)",
+      "type": "text",
+      "hidden": true
+    },
+    {
+      "key": "display_context_enabled",
+      "name": "Show the event/instance context of search results",
+      "type": "checkbox",
+      "hidden": true
     },
     {
       "key": "search_fields",
       "name": "Searchable Fields",
-      "required": true,
       "type": "sub_settings",
       "repeatable": true,
+      "hidden": true,
       "sub_settings": [
         {
           "key": "search_field_name",
           "name": "Searchable Field Name",
-          "required": true,
-          "type": "field-list",
+          "type": "text",
+          "repeatable": false
+        },
+        {
+          "key": "search_field_label",
+          "name": "Custom Display Label",
+          "type": "text",
           "repeatable": false
         },
         {
           "key": "search_field_name_wildcard",
-          "name": "Return Partial Matches?<br/><small><b>NOTE:</b> This setting is ignored for field types of <kbd>select</kbd>, <kbd>radio</kbd>, <kbd>checkbox</kbd>, and <kbd>sql</kbd></small>",
-          "required": false,
+          "name": "Return Partial Matches?",
           "type": "checkbox",
           "repeatable": false
         }
@@ -140,49 +111,37 @@
     {
       "key": "display_fields",
       "name": "Select the fields for display",
-      "required": true,
       "type": "sub_settings",
       "repeatable": true,
+      "hidden": true,
       "sub_settings": [
         {
           "key": "display_field_name",
           "name": "Field To Display in the Results Table",
-          "required": true,
           "type": "field-list",
+          "repeatable": false
+        },
+        {
+          "key": "display_field_header",
+          "name": "Use a custom header in place of the normal Field Label.",
+          "type": "text",
           "repeatable": false
         },
         {
           "key": "display_field_sort_on_field",
           "name": "Check if you wish to sort the table on this field.",
-          "required": false,
           "type": "checkbox",
           "repeatable": false
         },
         {
           "key": "display_field_sort_direction",
           "name": "Sort Direction",
-          "required": false,
-          "type": "dropdown",
-          "repeatable": false,
-          "choices": [
-            {
-              "value": "NONE",
-              "name": "None"
-            },
-            {
-              "value": "asc",
-              "name": "Ascending"
-            },
-            {
-              "value": "desc",
-              "name": "Descending"
-            }
-          ]
+          "type": "text",
+          "repeatable": false
         },
         {
           "key": "display_field_sort_priority",
           "name": "The order this sorted field should be applied in. (a number between 1 and the number of columns in the table)",
-          "required": false,
           "type": "text",
           "repeatable": false
         }

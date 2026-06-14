@@ -39,17 +39,17 @@ jobs:
           # 3. Copy all files to the new folder, preserving structure
           # (Using rsync makes it easy to exclude folders dynamically)
           rsync -av . "../${BUILD_NAME}" \
-            --exclude='node_modules/*' \
-            --exclude='src/*' \
+            --exclude='node_modules' \
+            --exclude='src' \
             --exclude='composer.phar' \
             --exclude='package*' \
             --exclude='vite.config.js' \
             --exclude='.git*' \
-            --exclude='.git/*' \
-            --exclude='.github/*' \
+            --exclude='.git' \
+            --exclude='.github' \
             --exclude='.env*' \
-            --exclude='.idea/*' \
-            --exclude='tests/*'
+            --exclude='.idea' \
+            --exclude='tests'
           
           # 4. Navigate to the parent directory and compress the folder
           cd ..

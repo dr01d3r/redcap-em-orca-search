@@ -27,18 +27,19 @@ jobs:
       - name: Build Vue.js application
         run: npm run build
 
-      # Step 4: Archive files while explicitly excluding unwanted items
-      - name: Bundle release files
+      - name: Set Build Name
         run: |
-          # 1. Define the dynamic folder name based on the Git tag
-          BUILD_NAME="orca_search_${{ github.ref_name }}"
+          TAG="${{ github.ref_name }}"
+          echo "BUILD_NAME=orca_search_${TAG%%-*}" >> $GITHUB_ENV
           
-          # 2. Create the target subfolder inside the runner's temporary directory
-          mkdir -p "../${BUILD_NAME}"
+      - name: Verify BUILD_NAME
+        run: echo "The build name is ${{ env.BUILD_NAME }}"
+
+      - name: Bundle release files
+        run: |          
+          mkdir -p "../${{ env.BUILD_NAME }}"
           
-          # 3. Copy all files to the new folder, preserving structure
-          # (Using rsync makes it easy to exclude folders dynamically)
-          rsync -av . "../${BUILD_NAME}" \
+          rsync -av . "../${{ env.BUILD_NAME }}" \
             --exclude='node_modules' \
             --exclude='src' \
             --exclude='composer.phar' \
@@ -51,16 +52,13 @@ jobs:
             --exclude='.idea' \
             --exclude='tests'
           
-          # 4. Navigate to the parent directory and compress the folder
           cd ..
-          zip -r "${BUILD_NAME}.zip" "${BUILD_NAME}"
-          
-          # 5. Move the finished ZIP back to the workspace so subsequent steps can find it
-          mv "${BUILD_NAME}.zip" "${GITHUB_WORKSPACE}/"
+          zip -r "${{ env.BUILD_NAME }}.zip" "${{ env.BUILD_NAME }}"
+          mv "${{ env.BUILD_NAME }}.zip" "${GITHUB_WORKSPACE}/"
 
       # Step 5: Automatically create the GitHub Release and attach the ZIP
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: "orca_search_${{ github.ref_name }}.zip"
+          files: "${{ env.BUILD_NAME }}.zip"
           generate_release_notes: true

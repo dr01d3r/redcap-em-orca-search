@@ -3,9 +3,9 @@ name: Vue.js Automated NPM Build
 # Triggers the workflow on push or pull requests targeting the main branch
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   vue-build:

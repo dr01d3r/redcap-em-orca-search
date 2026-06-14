@@ -30,17 +30,33 @@ jobs:
       # Step 4: Archive files while explicitly excluding unwanted items
       - name: Bundle release files
         run: |
-          zip -r "orca_search_${{ github.ref_name }}.zip" . \
-            -x "node_modules/*" \
-            -x "src/*" \
-            -x "composer.phar" \
-            -x "package*" \
-            -x "vite.config.js" \
-            -x ".git*" \
-            -x ".git/*" \
-            -x ".github/*" \
-            -x ".env*" \
-            -x "tests/*"
+          # 1. Define the dynamic folder name based on the Git tag
+          BUILD_NAME="orca_search_${{ github.ref_name }}"
+          
+          # 2. Create the target subfolder inside the runner's temporary directory
+          mkdir -p "../${BUILD_NAME}"
+          
+          # 3. Copy all files to the new folder, preserving structure
+          # (Using rsync makes it easy to exclude folders dynamically)
+          rsync -av . "../${BUILD_NAME}" \
+            --exclude='node_modules/*' \
+            --exclude='src/*' \
+            --exclude='composer.phar' \
+            --exclude='package*' \
+            --exclude='vite.config.js' \
+            --exclude='.git*' \
+            --exclude='.git/*' \
+            --exclude='.github/*' \
+            --exclude='.env*' \
+            --exclude='.idea/*' \
+            --exclude='tests/*'
+          
+          # 4. Navigate to the parent directory and compress the folder
+          cd ..
+          zip -r "${BUILD_NAME}.zip" "${BUILD_NAME}"
+          
+          # 5. Move the finished ZIP back to the workspace so subsequent steps can find it
+          mv "${BUILD_NAME}.zip" "${GITHUB_WORKSPACE}/"
 
       # Step 5: Automatically create the GitHub Release and attach the ZIP
       - name: Create GitHub Release

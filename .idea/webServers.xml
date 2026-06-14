@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b5dc1251-ae60-4c52-8e78-1793001723d5" name="[em] external_birc" url="http://dev-kadolphc2/redcap/external/birc">
+        <fileTransfer mountedRoot="D:\inetpub\wwwroot\redcap\external\birc" accessType="MOUNT" port="0" />
+      </webServer>
+      <webServer id="7a64fce0-a3d9-4dd5-b0df-6c6eaca45e21" name="git (project level)" url="http://localhost">
+        <fileTransfer mountedRoot="D:\git\dr01d3r\redcap-em-orca-search" accessType="MOUNT" port="0" />
+      </webServer>
+      <webServer id="e41d9199-7387-4eb7-8188-3c5b3ff220a7" name="[local] v2.4.1" url="http://dev-kadolphc2/redcap/external/birc">
+        <fileTransfer mountedRoot="D:\inetpub\wwwroot\redcap\external\birc" accessType="MOUNT" port="0" />
+      </webServer>
+    </option>
+  </component>
+</project>

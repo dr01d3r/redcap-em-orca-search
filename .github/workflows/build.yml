@@ -1,0 +1,32 @@
+name: Vue.js Automated NPM Build
+
+# Triggers the workflow on push or pull requests targeting the main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  vue-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Clone the code from your GitHub repository onto the runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Establish the Node.js runtime environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # Match your local Node.js version
+          cache: 'npm'       # Caches dependencies for faster subsequent runs
+
+      # Step 3: Install project dependencies cleanly
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Execute the production compiler script
+      - name: Build Vue.js application
+        run: npm run build

@@ -51,14 +51,15 @@ jobs:
             --exclude='.env*' \
             --exclude='.idea' \
             --exclude='tests'
-          
-          cd ..
-          zip -r "${{ env.BUILD_NAME }}.zip" "${{ env.BUILD_NAME }}"
-          mv "${{ env.BUILD_NAME }}.zip" "${GITHUB_WORKSPACE}/"
 
-      # Step 5: Automatically create the GitHub Release and attach the ZIP
+          # zip up the build, preserving the full tag as the zip filename (only the inner folder needs to be clean)
+          cd ..
+          zip -r "orca_search_${{ github.ref_name }}.zip" "${{ env.BUILD_NAME }}"
+          mv "orca_search_${{ github.ref_name }}.zip" "${GITHUB_WORKSPACE}/"
+
+      # Automatically create the GitHub Release and attach the ZIP
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: "${{ env.BUILD_NAME }}.zip"
+          files: "orca_search_${{ github.ref_name }}.zip"
           generate_release_notes: true

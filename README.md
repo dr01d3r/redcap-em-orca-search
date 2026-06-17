@@ -50,7 +50,7 @@ This module does not yet support repeating events.
 
 ## Options
 
-![orca_search configuration_2](imgs/os_config_2.PNG)
+![orca_search configuration_2](imgs/os_config_2.png)
 
 ### General Configuration
 
@@ -75,7 +75,7 @@ This module does not yet support repeating events.
 
 ### Search Fields
 
-![orca_search configuration_3](imgs/os_config_3.PNG)
+![orca_search configuration_3](imgs/os_config_3.png)
 
 - This repeating configuration allows you to select the fields that you want to use as search fields.
 - The filter box at the top of the dialog allows you to search for anything displayed, like field name, field label, and instrument 

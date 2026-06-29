@@ -139,7 +139,11 @@ trait ModuleUtils {
         $Proj = new \Project($project_id);
         $metadata = $this->getMyMetadata($project_id);
         // check for dev status and record count limit
-        $dev_max_record_limit_reached = $Proj->reachedMaxRecordCount(1);
+        $dev_max_record_limit_reached = false;
+        // backward compatibility check
+        if (method_exists($Proj, 'reachedMaxRecordCount')) {
+            $dev_max_record_limit_reached = $Proj->reachedMaxRecordCount(1);
+        }
         if ($dev_max_record_limit_reached) {
             $dev_max_record_limit_reached_html = $this->outputMaxRecordCountErrorMsg($project_id);
         }
@@ -182,8 +186,8 @@ trait ModuleUtils {
         // these will be used later to determine search/display field visibility
         foreach ($Proj->forms as $f => $fi) {
             $config["rights"][$f] =
-                (\UserRights::hasDataViewingRights($user_rights["forms"][$f], 'view-edit') ?? false) ||
-                (\UserRights::hasDataViewingRights($user_rights["forms"][$f], 'read-only') ?? false) ||
+                ($this->hasDataViewingRights($user_rights["forms"][$f], 'view-edit') ?? false) ||
+                ($this->hasDataViewingRights($user_rights["forms"][$f], 'read-only') ?? false) ||
                 (empty($impersonatingUser) && SUPER_USER)
             ;
         }

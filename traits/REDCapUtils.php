@@ -503,4 +503,63 @@ ORDER BY CAST(record as UNSIGNED), event_id DESC, COALESCE(instance, 1) DESC
         );
         return $html;
     }
+
+    /**
+     * Local copy from core - as of v17.1.4 - for backwards compatibility
+     * Determine if current user has the specified data viewing rights
+     * This is a direct mapping to the "Data Viewing Rights" table.
+     * @param string|int $value
+     * @param string $right One of: 'no-access', 'read-only', 'view-edit', 'editresp', 'delete'
+     * @return bool
+     */
+    public function hasDataViewingRights($value, $right) {
+        // When invalid value, return true for "no-access", else false
+        if (!is_numeric($value) || $value === "") return $right == 'no-access';
+        $value = intval($value);
+        $grant = false;
+        if ($value < 128) {
+            // Legacy:
+            // 0 = no-access, 1 = view-edit, 2 = read-only, 3 = editresp
+            switch ($right) {
+                case 'no-access':
+                    $grant = ($value == 0);
+                    break;
+                case 'read-only':
+                    $grant = ($value == 2);
+                    break;
+                case 'view-edit':
+                    $grant = ($value == 1) || ($value == 3);
+                    break;
+                case 'editresp':
+                    $grant = ($value == 3);
+                    break;
+                case 'delete':
+                    $grant = false;
+                    break;
+            }
+        }
+        else {
+            // New bitmask:
+            // 128 = Marker for new bitmask
+            // 1 = read-only, 2 = view-edit, 8 = editresp, 16 = delete
+            switch($right) {
+                case 'no-access':
+                    $grant = ($value == 128);
+                    break;
+                case 'read-only':
+                    $grant = ($value & 1) == 1;
+                    break;
+                case 'view-edit':
+                    $grant = ($value & 2) == 2;
+                    break;
+                case 'editresp':
+                    $grant = ($value & 2) == 2 && ($value & 8) == 8;
+                    break;
+                case 'delete':
+                    $grant = ($value & 2) == 2 && ($value & 16) == 16;
+                    break;
+            }
+        }
+        return $grant;
+    }
 }

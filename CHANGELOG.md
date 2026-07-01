@@ -1,3 +1,11 @@
+## 3.0.2
+
+- Updated module author info
+
+## 3.0.1
+
+- Bug Fix: Backward compatibility fixes for methods that weren't implemented until v15.5.0 and v15.7.0 STD.
+
 ## 3.0.0
 
 - **Major codebase refactor to utilize the VueJS (v3) framework**

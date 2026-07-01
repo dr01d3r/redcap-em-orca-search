@@ -6,7 +6,7 @@
       <paths name="local">
         <serverdata>
           <mappings>
-            <mapping deploy="\modules\orca_search_v3.0.1" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="\modules\orca_search_v3.0.2" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/composer.phar" />

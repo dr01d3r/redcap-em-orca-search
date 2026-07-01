@@ -96,7 +96,7 @@ const search = async () => {
     debug.value = null;
     errors.value = [];
     dtSearchField.value = searchField.value;
-    dtSearchValue.value = structuredClone(searchValue.value?.trim());
+    dtSearchValue.value = `${searchValue.value}`?.trim();
     OrcaSearch().jsmo.ajax('search', {
         field: dtSearchField.value,
         value: dtSearchValue.value

@@ -436,8 +436,8 @@ ORDER BY CAST(record as UNSIGNED), event_id DESC, COALESCE(instance, 1) DESC
             // account for rich text editor or multi-line labels
             $v = preg_split("/\r\n|\n|<br>|<br \/>/", strip_tags($value, '<br>'));
             $value = $v[0];
-            if (strlen($value) > ($limit - 3)) {
-                $value = substr($value, 0, ($limit - 3)) . "...";
+            if (mb_strlen($value, 'UTF-8') > $limit) {
+                $value = mb_substr($value, 0, ($limit - 3), 'UTF-8') . "...";
             }
         }
         return $value;

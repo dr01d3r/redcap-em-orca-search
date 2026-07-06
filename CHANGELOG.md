@@ -1,3 +1,7 @@
+## 3.0.3
+
+- Bug fix: Fixed an issue related to multi-byte unicode characters in field labels
+
 ## 3.0.2
 
 - Updated module author info

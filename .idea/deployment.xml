@@ -6,32 +6,16 @@
       <paths name="local">
         <serverdata>
           <mappings>
-            <mapping deploy="\modules\orca_search_v3.0.3" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="\modules\orca_search_v3.0.5" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/composer.phar" />
             <excludedPath local="true" path="$PROJECT_DIR$/node_modules" />
             <excludedPath local="true" path="$PROJECT_DIR$/src" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/vite.config.js" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
-          </excludedPaths>
-        </serverdata>
-      </paths>
-      <paths name="local (v2.4.1)">
-        <serverdata>
-          <mappings>
-            <mapping deploy="\modules\orca_search_v2.4.1" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/composer.phar" />
-            <excludedPath local="true" path="$PROJECT_DIR$/node_modules" />
-            <excludedPath local="true" path="$PROJECT_DIR$/src" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/vite.config.js" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.github" />
           </excludedPaths>
         </serverdata>
       </paths>

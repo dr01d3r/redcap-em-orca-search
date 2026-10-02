@@ -29,8 +29,8 @@ trait ConfigUtils {
         ];
 
         foreach ($this->getSubSettings("search_fields") as $search_field) {
-            if (empty($search_field["search_field_name"])) continue;
             $field_name = $search_field["search_field_name"];
+            if (empty($field_name) || !isset($Proj->metadata[$field_name])) continue;
             $field = [
                 "name" => $field_name,
                 "label" => $search_field["search_field_label"]
@@ -48,8 +48,8 @@ trait ConfigUtils {
         }
 
         foreach ($this->getSubSettings("display_fields") as $display_field) {
-            if (empty($display_field["display_field_name"])) continue;
             $field_name = $display_field["display_field_name"];
+            if (empty($field_name) || !isset($Proj->metadata[$field_name])) continue;
             $response["display_fields"][] = [
                 "name" => $field_name,
                 "sort" => $display_field["display_field_sort_on_field"],

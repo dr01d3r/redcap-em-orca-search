@@ -1,3 +1,11 @@
+## 3.0.5
+
+- Bug fix: Fixed an issue where the configuration page would not load properly if you deleted a field in your project that was configured as a search or display field.
+
+## 3.0.4
+
+- Security fixes: Updated some dependencies to address security vulnerabilities
+
 ## 3.0.3
 
 - Bug fix: Fixed an issue related to multi-byte unicode characters in field labels

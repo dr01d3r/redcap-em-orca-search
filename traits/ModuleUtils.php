@@ -194,8 +194,8 @@ trait ModuleUtils {
 
         // build metadata for search_fields
         foreach ($this->getSubSettings("search_fields") as $search_field) {
-            if (empty($search_field["search_field_name"])) continue;
             $field_name = $search_field["search_field_name"];
+            if (empty($field_name) || !isset($Proj->metadata[$field_name])) continue;
             $form_name = $metadata["fields"][$field_name]["form"];
             // skip if user doesn't have access to this form
             if (!$config["rights"][$form_name]) continue;
@@ -225,8 +225,8 @@ trait ModuleUtils {
         // build metadata for display_fields
         $display_sort = [];
         foreach ($this->getSubSettings("display_fields") as $display_field) {
-            if (empty($display_field["display_field_name"])) continue;
             $field_name = $display_field["display_field_name"];
+            if (empty($field_name) || !isset($Proj->metadata[$field_name])) continue;
             $field_header = $display_field["display_field_header"] ?? $metadata["fields"][$field_name]["label"];
             $form_name = $metadata["fields"][$field_name]["form"];
             // skip if user doesn't have access to this form
